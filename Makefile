@@ -1,6 +1,8 @@
 # Variables
 
 # ----------------------------------------------------------------
+.PHONY: help run_server clear_log
+
 help:
 	@echo "usage: make [command]"
 	@echo "list commands:"
@@ -11,5 +13,4 @@ run_server:
 	go run ./cmd/server/main.go
 
 clear_log:
-	rm -rf ./log/*
-	mkdir -p ./log
+	rm -rf ./storages/log/*

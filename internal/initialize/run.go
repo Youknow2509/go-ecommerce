@@ -1,6 +1,7 @@
 package initialize
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/Bot-SomeOne/go-ecommerce/global"
@@ -10,9 +11,11 @@ import (
 func Run() {
 	// load configuration
 	LoadConfig()
+	fmt.Println("@@@@ Loaded configuration")
 
 	// initialize logger
 	InitLogger()
+	global.Logger.Info("Logger initialized")
 
 	// connect to my sql
 	InitMysql()
