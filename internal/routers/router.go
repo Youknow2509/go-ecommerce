@@ -2,7 +2,7 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
+	c "github.com/Bot-SomeOne/go-ecommerce/internal/controller"
 )
 
 func NewRouter() *gin.Engine {
@@ -10,36 +10,15 @@ func NewRouter() *gin.Engine {
 
 	v1 := router.Group("/v1")
 	{
-		v1.GET("/ping", PongHandler) // /v1/ping
-		v1.PUT("/ping", PongHandler)
-		v1.POST("/ping", PongHandler)
-		v1.DELETE("/ping", PongHandler)
-		v1.OPTIONS("/ping", PongHandler)
-		v1.PATCH("/ping", PongHandler)
-		v1.HEAD("/ping", PongHandler)
+		v1.GET("/ping", c.NewPongController().PongHandler) // /v1/ping
+		v1.GET("/user", c.NewUserController().GetUserByID) // /v1/user
+		// v1.PUT("/ping", controller.NewPongController().PongHandler)
+		// v1.POST("/ping", controller.NewPongController().PongHandler)
+		// v1.DELETE("/ping", controller.NewPongController().PongHandler)
+		// v1.OPTIONS("/ping", controller.NewPongController().PongHandler)
+		// v1.PATCH("/ping", controller.NewPongController().PongHandler)
+		// v1.HEAD("/ping", controller.NewPongController().PongHandler)
 	}
 
-	router.NoRoute(PageNotFoundHandler)
-
 	return router
-}
-
-func PongHandler(c *gin.Context) {
-	name := c.Param("name")
-	uid := c.Query("uid")
-	c.JSON(http.StatusNotFound, gin.H{
-		"message": "pong",
-		"name":    name,
-		"uid":     uid,
-	})
-}
-
-func PageNotFoundHandler(c *gin.Context) {
-	name := c.Param("name")
-	uid := c.Query("uid")
-	c.JSON(http.StatusNotFound, gin.H{
-		"message": "404 page not found",
-		"name":    name,
-		"uid":     uid,
-	})
 }
