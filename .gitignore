@@ -1,0 +1,6 @@
+# File in mac
+**/.DS_Store
+.DS_Store
+
+# Config production
+config/production.yaml
