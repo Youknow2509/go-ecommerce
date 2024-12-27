@@ -1,29 +1,11 @@
 server:
   port: 8082
-databases:
-  - user: admin
-    password: admin
-    host: localhost
-    dbName: go-ecommerce
-  - user: order
-    password: order
-    host: localhost
-    dbName: go-ecommerce-order
-sercurity:
-  jwt:
-    key: abc123
-redis:
-  host: localhost
-  port: 6379
-elasticsearch:
-  host: localhost
-  port: 9200
-rabbitmq:
-  host: localhost
-  port: 5672
-  user: guest
-  password: guest
-kafka:
-  host: localhost
-  port: 9092
-
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  username: root
+  password: root123
+  dbname: go-ecommerce
+  maxIdleConns: 10
+  maxOpenConns: 100
+  connMaxLifetime: 3600
