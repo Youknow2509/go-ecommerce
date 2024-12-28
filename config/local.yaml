@@ -5,7 +5,7 @@ mysql:
   port: 3306
   username: root
   password: root123
-  dbname: go-ecommerce
+  dbname: go_ecommerce
   maxIdleConns: 10
   maxOpenConns: 100
   connMaxLifetime: 3600
