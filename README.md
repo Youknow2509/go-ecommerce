@@ -13,3 +13,4 @@
 - Handle database:
     + [gorm]("https://github.com/go-gorm/gorm")
     + [uuid google]("https://github.com/google/uuid") - Google UUID for generate UUID
+    + [redis]("https://github.com/redis/go-redis")

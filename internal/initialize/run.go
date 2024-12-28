@@ -19,9 +19,11 @@ func Run() {
 
 	// connect to my sql
 	InitMysql()
+	global.Logger.Info("Mysql initialized")
 
 	// connect to redis
 	InitRedis()
+	global.Logger.Info("Redis initialized")
 
 	// connect to kafka
 	InitKafka()
