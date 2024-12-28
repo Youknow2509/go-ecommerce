@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Bot-SomeOne/go-ecommerce/global"
-	"github.com/Bot-SomeOne/go-ecommerce/internal/po"
+	"github.com/Youknow2509/go-ecommerce/global"
+	"github.com/Youknow2509/go-ecommerce/internal/po"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

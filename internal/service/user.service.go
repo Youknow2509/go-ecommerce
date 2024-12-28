@@ -1,7 +1,7 @@
 package service
 
 import (
-	rp "github.com/Bot-SomeOne/go-ecommerce/internal/repo"
+	rp "github.com/Youknow2509/go-ecommerce/internal/repo"
 )
 
 type UserService struct {

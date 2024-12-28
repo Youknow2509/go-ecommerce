@@ -1,8 +1,8 @@
 package initialize
 
 import (
-	"github.com/Bot-SomeOne/go-ecommerce/global"
-	"github.com/Bot-SomeOne/go-ecommerce/pkg/logger"
+	"github.com/Youknow2509/go-ecommerce/global"
+	"github.com/Youknow2509/go-ecommerce/pkg/logger"
 )
 
 // Initial Logger
