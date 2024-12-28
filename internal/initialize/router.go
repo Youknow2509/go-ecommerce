@@ -1,54 +1,47 @@
 package initialize
 
 import (
-	"fmt"
-
-	c "github.com/Youknow2509/go-ecommerce/internal/controller"
-	"github.com/Youknow2509/go-ecommerce/internal/middlewares"
+	"github.com/Youknow2509/go-ecommerce/global"
+	"github.com/Youknow2509/go-ecommerce/internal/routers"
 	"github.com/gin-gonic/gin"
 )
 
 // Initial router
 func InitRouter() *gin.Engine {
-	router := gin.Default()
+	// router := gin.Default()
+	var router *gin.Engine
 
-	router.Use(middlewares.AuthenMiddleware(), AA(), BB(), CC())
+	if global.Config.Server.Mode == "dev" {
+		gin.SetMode(gin.DebugMode)
+		gin.ForceConsoleColor()
+		router = gin.Default()
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+		router = gin.New()
+	}
 
-	v1 := router.Group("/v1")
+	// middlewares
+	router.Use() // logger
+	router.Use() // cross
+	router.Use() // limiter global
+
+	manageRouter := routers.RouterGroupApp.Manage
+	userRouter := routers.RouterGroupApp.User
+
+	MainGroup := router.Group("/v1")
 	{
-		v1.GET("/ping", c.NewPongController().PongHandler) // /v1/ping
-		v1.GET("/user", c.NewUserController().GetUserByID) // /v1/user
-		// v1.PUT("/ping", controller.NewPongController().PongHandler)
-		// v1.POST("/ping", controller.NewPongController().PongHandler)
-		// v1.DELETE("/ping", controller.NewPongController().PongHandler)
-		// v1.OPTIONS("/ping", controller.NewPongController().PongHandler)
-		// v1.PATCH("/ping", controller.NewPongController().PongHandler)
-		// v1.HEAD("/ping", controller.NewPongController().PongHandler)
+		MainGroup.GET("/checkStatus") // tracking monitor 
+	}
+	{
+		userRouter.InitUserRouter(MainGroup)
+        userRouter.InitProductRouter(MainGroup)
+        //... other routes...
+	}
+	{
+		manageRouter.InitAdminRouter(MainGroup)
+		manageRouter.InitUserRouter(MainGroup)
+		//... other routes...
 	}
 
 	return router
-}
-
-func AA() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		fmt.Println("Before --> AA")
-		c.Next()
-		fmt.Println("After --> AA")
-	}
-}
-
-func BB() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		fmt.Println("Before --> BB")
-		c.Next()
-		fmt.Println("After --> BB")
-	}
-}
-
-func CC() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		fmt.Println("Before --> CC")
-		c.Next()
-		fmt.Println("After --> CC")
-	}
 }
