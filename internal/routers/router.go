@@ -3,8 +3,8 @@ package routers
 import (
 	"fmt"
 
-	c "github.com/Bot-SomeOne/go-ecommerce/internal/controller"
-	"github.com/Bot-SomeOne/go-ecommerce/internal/middlewares"
+	c "github.com/Youknow2509/go-ecommerce/internal/controller"
+	"github.com/Youknow2509/go-ecommerce/internal/middlewares"
 	"github.com/gin-gonic/gin"
 )
 

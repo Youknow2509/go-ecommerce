@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"github.com/Bot-SomeOne/go-ecommerce/response"
+	"github.com/Youknow2509/go-ecommerce/response"
 	"github.com/gin-gonic/gin"
 )
 

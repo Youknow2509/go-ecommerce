@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"github.com/Bot-SomeOne/go-ecommerce/internal/service"
-	"github.com/Bot-SomeOne/go-ecommerce/response"
+	"github.com/Youknow2509/go-ecommerce/internal/service"
+	"github.com/Youknow2509/go-ecommerce/response"
 	"github.com/gin-gonic/gin"
 )
 

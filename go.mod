@@ -1,4 +1,4 @@
-module github.com/Bot-SomeOne/go-ecommerce
+module github.com/Youknow2509/go-ecommerce
 
 go 1.23.4
 

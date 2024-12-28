@@ -3,9 +3,9 @@ package initialize
 import (
 	"fmt"
 
-	"github.com/Bot-SomeOne/go-ecommerce/global"
+	"github.com/Youknow2509/go-ecommerce/global"
 	"github.com/spf13/viper"
-) 
+)
 
 // func load configuration with viper
 func LoadConfig() {

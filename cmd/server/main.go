@@ -1,6 +1,6 @@
 package main
 
-import "github.com/Bot-SomeOne/go-ecommerce/internal/initialize"
+import "github.com/Youknow2509/go-ecommerce/internal/initialize"
 
 func main() {
 	initialize.Run()

@@ -3,7 +3,7 @@ package logger
 import (
 	"os"
 
-	"github.com/Bot-SomeOne/go-ecommerce/pkg/setting"
+	"github.com/Youknow2509/go-ecommerce/pkg/setting"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"

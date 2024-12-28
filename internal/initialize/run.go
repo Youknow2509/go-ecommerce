@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/Bot-SomeOne/go-ecommerce/global"
+	"github.com/Youknow2509/go-ecommerce/global"
 )
 
 // Run all initialization
