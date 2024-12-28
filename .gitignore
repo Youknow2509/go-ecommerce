@@ -4,3 +4,6 @@
 
 # Config production
 config/production.yaml
+
+# Logger project
+**/*.log
