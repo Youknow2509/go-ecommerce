@@ -1,3 +1,0 @@
-2024-12-28T03:31:32.169+0700	INFO	initialize/run.go:18	Logger initialized
-2024-12-28T12:15:52.086+0700	INFO	initialize/run.go:18	Logger initialized
-2024-12-28T12:15:52.109+0700	INFO	initialize/mysql.go:37	MySQL connection successful
