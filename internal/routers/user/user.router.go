@@ -4,6 +4,7 @@ import (
 	// "github.com/Youknow2509/go-ecommerce/internal/controller"
 	// "github.com/Youknow2509/go-ecommerce/internal/repo"
 	// "github.com/Youknow2509/go-ecommerce/internal/service"
+	"github.com/Youknow2509/go-ecommerce/internal/wire"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,7 +26,12 @@ func (ur *UserRouter) InitUserRouter(Router *gin.RouterGroup) {
 	// }
 
 	// -> handle with wire go
-
+	userController, _ := wire.InitUserRouterHandle()
+	userRouterPublic := Router.Group("/user")
+	{
+		userRouterPublic.POST("/register", userController.Register)
+		// userRouterPublic.POST("/send_otp")
+	}
 
 	// private router
 	userRouterPrivate := Router.Group("/user")
