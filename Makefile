@@ -36,6 +36,7 @@ help:
 	@echo "\t ${YELLOW_COLOR_BG}docker_stop_v${RESET_COLOR} \t Stop and remove Docker volumes"
 	@echo "\nContainer Exec Commands:"
 	@echo "\t ${YELLOW_COLOR_BG}exec_mysql${RESET_COLOR} \t Execute MySQL CLI"
+	@echo "\t ${YELLOW_COLOR_BG}mysql_dump${RESET_COLOR} \t Render SQL file in database"
 	@echo "\t ${YELLOW_COLOR_BG}exec_redis${RESET_COLOR} \t Execute Redis CLI"
 	@echo "\t ${YELLOW_COLOR_BG}exec_kafka_ui${RESET_COLOR} \t Open Kafka UI"
 
@@ -135,3 +136,9 @@ coverage:
 	$(GO) test ./... -coverprofile=coverage.out
 	$(GO) tool cover -html=coverage.out
 	@echo "${GREEN_COLOR_BG}Coverage report generated${RESET_COLOR}"
+
+# Render my sql file with mysqldump 
+mysql_dump:
+	@echo "${YELLOW_COLOR_BG}Renaming SQL file in database${RESET_COLOR}"
+	docker exec -i mysql_v8_container mysqldump -uroot --databases go_ecommerce --add-drop-database --add-drop-table --add-drop-trigger --add-locks --no-data > migrations/go_ecommerce.sql -p
+	@echo "${GREEN_COLOR_BG}SQL file rendered${RESET_COLOR}"
