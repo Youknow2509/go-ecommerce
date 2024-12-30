@@ -40,7 +40,7 @@ func NewRouter() *gin.Engine {
 	v1 := router.Group("/v1")
 	{
 		v1.GET("/ping", c.NewPongController().PongHandler) // /v1/ping
-		v1.GET("/user", c.NewUserController().GetUserByID) // /v1/user
+		// v1.GET("/user", c.NewUserController().GetUserByID) // /v1/user
 		// v1.PUT("/ping", controller.NewPongController().PongHandler)
 		// v1.POST("/ping", controller.NewPongController().PongHandler)
 		// v1.DELETE("/ping", controller.NewPongController().PongHandler)
