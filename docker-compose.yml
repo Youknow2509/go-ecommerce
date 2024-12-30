@@ -6,10 +6,10 @@ services:
     image: mysql:8.0
     container_name: mysql_v8_container
     environment:
-      - MYSQL_ROOT_PASSWORD=root123
-      - MYSQL_DATABASE=go_ecommerce
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DBNAME}
     ports:
-      - "3306:3306"
+      - "${MYSQL_PORT}:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./init:/docker-entrypoint-initdb.d
@@ -19,12 +19,13 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
+
   # Redis service
   redis:
     image: redis:7.0
     container_name: redis_v7_container
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT}:6379"
     volumes:
       - redis_data:/data
     healthcheck:
@@ -33,12 +34,13 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+
   # Zookeeper service - Kafka dependency injection for cluster management and monitoring
   zookeeper:
     image: bitnami/zookeeper:3.8
-    container_name: zookeeper
+    container_name: zookeeper_container
     ports:
-      - "2181:2181"
+      - "${ZOOKEEPER_PORT}:2181"
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
     volumes:
@@ -47,18 +49,18 @@ services:
   # Kafka service
   kafka:
     image: bitnami/kafka:3.5
-    container_name: kafka
+    container_name: kafka_container
     ports:
-      - "9092:9092" # Internal listener
-      - "9094:9094" # External listener - use in application
+      - "${KAFAK_PORT_INTERNAL}:${KAFAK_PORT_INTERNAL}" # Internal listener
+      - "${KAFAK_PORT_EXTERNAL}:${KAFAK_PORT_EXTERNAL}" # External listener - use in application
     environment:
       # Zookeeper configuration
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       
       # Listener configurations
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
-      - KAFKA_CFG_LISTENERS=INTERNAL://:9092,EXTERNAL://:9094
-      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://kafka:9092,EXTERNAL://localhost:9094
+      - KAFKA_CFG_LISTENERS=INTERNAL://:${KAFAK_PORT_INTERNAL},EXTERNAL://:${KAFAK_PORT_EXTERNAL}
+      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://kafka:${KAFAK_PORT_INTERNAL},EXTERNAL://localhost:${KAFAK_PORT_EXTERNAL}
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL
 
       # Performance and operational settings
@@ -82,26 +84,26 @@ services:
       - kafka_data:/bitnami/kafka
 
   # Kafka UI (Optional)
-  kafka-ui:
+  kafka_ui:
     image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui
+    container_name: kafka_ui
     ports:
-      - "8083:8080"
+      - "${KAFKA_UI_PORT}:8080"
     environment:
       - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:${KAFAK_PORT_INTERNAL}
     depends_on:
       - kafka
 
   # Schema Registry (Optional but recommended)
-  schema-registry:
+  schema_registry:
     image: confluentinc/cp-schema-registry:7.4.1
-    container_name: schema-registry
+    container_name: schema_registry
     ports:
       - "8081:8081"
     environment:
-      - SCHEMA_REGISTRY_HOST_NAME=schema-registry
-      - SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS=kafka:9092
+      - SCHEMA_REGISTRY_HOST_NAME=schema_registry
+      - SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS=kafka:${KAFAK_PORT_INTERNAL}
     depends_on:
       - kafka
       - zookeeper

@@ -40,6 +40,6 @@ kafak:
   #   - 
   #  TODO complete the configuration
 
-kafka-ui:
+kafka_ui:
   host: 127.0.0.1
   port: 8083
