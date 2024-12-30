@@ -24,3 +24,5 @@
     + [kafka](https://github.com/segmentio/kafka-go)
       + [zookeeper](https://github.com/bitnami/containers)
       + [kafka-ui](https://github.com/provectus/kafka-ui)
+
+- Handle dependencies injection wiht [wire](https://github.com/google/wire)

@@ -9,3 +9,8 @@ config/production.yaml
 
 # Logger project
 **/*.log
+
+# Wire generated
+wire_gen.go
+**/wire_gen.go
+*_gen.go
