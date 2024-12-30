@@ -8,6 +8,7 @@ import (
 	"github.com/Youknow2509/go-ecommerce/internal/po"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
+	"gorm.io/gen"
 	"gorm.io/gorm"
 )
 
@@ -41,7 +42,10 @@ func InitMysql() {
 	SetPool()
 
 	// migrate tables
-	MigrateTables()
+	// MigrateTables()
+
+	// genTableDAO
+	// genTableDAO()
 }
 
 // InitMysql().SetPool()
@@ -58,6 +62,23 @@ func SetPool() {
 	sqlDb.SetMaxOpenConns(m.MaxOpenConns)                      // Gioi han so luong ket noi toi da
 	sqlDb.SetConnMaxLifetime(time.Duration(m.ConnMaxLifetime)) // Gioi han thoi gian toi da cua ket noi
 
+}
+
+// genTableDAO
+func genTableDAO() {
+	g := gen.NewGenerator(gen.Config{
+		OutPath: "./internal/model",                                                 // output path
+		Mode:    gen.WithoutContext | gen.WithDefaultQuery | gen.WithQueryInterface, // generate mode
+	})
+
+	// gormdb, _ := gorm.Open(mysql.Open("root:@(127.0.0.1:3306)/demo?charset=utf8mb4&parseTime=True&loc=Local"))
+	g.UseDB(global.Mdb) // reuse your gorm db
+
+	// Generate all table
+	g.GenerateAllTable()
+
+	// Generate the code
+	g.Execute()
 }
 
 // migrate tables
