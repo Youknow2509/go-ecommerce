@@ -12,6 +12,7 @@ help:
 	@echo "list commands:"
 	@echo "\t ${YELLOW_COLOR_BG}run_server${RESET_COLOR} \t Run the server in development mode"
 	@echo "\t ${YELLOW_COLOR_BG}clear_log${RESET_COLOR} \t Clear the log file"
+	@echo "\t ${YELLOW_COLOR_BG}cre_env${RESET_COLOR} \t Create .env variables from .yaml"
 	@echo "\t ${YELLOW_COLOR_BG}docker_run${RESET_COLOR} \t Run all container docker use"
 	@echo "\t ${YELLOW_COLOR_BG}docker_build${RESET_COLOR} \t Build all container docker use"
 	@echo "\t ${YELLOW_COLOR_BG}docker_stop${RESET_COLOR} \t Stop all container docker use"
@@ -30,6 +31,11 @@ clear_log:
 	@echo "${YELLOW_COLOR_BG}Clear all file loggers${RESET_COLOR}"
 	rm -rf ./storages/log/*
 	rm -rf ./storages/logs/*
+
+cre_env:
+	@echo "${YELLOW_COLOR_BG}Create .env variables from .yaml${RESET_COLOR}"
+	rm -rf .env
+	go run cmd/cli/viper/main.vipper.convert.go
 
 docker_build:
 	@echo "${YELLOW_COLOR_BG}Docker build all container project${RESET_COLOR}"
