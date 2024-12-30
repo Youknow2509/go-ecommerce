@@ -8,14 +8,22 @@ import (
 
 // UserController struct
 type UserController struct {
-	userService *service.UserService
+	userService service.IUserService
 }
 
 // NewUserController function
-func NewUserController() *UserController {
+func NewUserController(
+	userService service.IUserService,
+) *UserController {
 	return &UserController{
-		userService: service.NewUserService(),
+		userService: userService,
 	}
+}
+
+// Register user
+func (uc *UserController) Register(c *gin.Context) {
+	result := uc.userService.RegisterService("","")
+	response.SuccessResponse(c, result, "")
 }
 
 // controlelr -> service -> repo -> models -> dbs
