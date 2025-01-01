@@ -43,3 +43,13 @@ kafak:
 kafka_ui:
   host: 127.0.0.1
   port: 8083
+
+smtp:
+  host: smtp.gmail.com
+  port: 587
+  username: 
+  password: 
+
+send_grid:
+  api_key:
+

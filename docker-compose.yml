@@ -34,6 +34,17 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+  
+  # redis/redisinsight service
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight_container
+    ports:
+      - "15540:5540"
+    environment:
+      - REDIS_HOSTS=redis:6379
+    depends_on:
+      - redis
 
   # Zookeeper service - Kafka dependency injection for cluster management and monitoring
   zookeeper:

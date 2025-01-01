@@ -1,17 +1,9 @@
 package repo
 
-// type UserRepo struct {
-// }
-
-// // New UserRepo creates a new UserRepo
-// func NewUserRepo() *UserRepo {
-// 	return &UserRepo{}
-// }
-
-// // Get Information User
-// func (u *UserRepo) GetInfoUser() string {
-// 	return "some one"
-// }
+import (
+	"github.com/Youknow2509/go-ecommerce/global"
+	"github.com/Youknow2509/go-ecommerce/internal/model"
+)
 
 // Interface Version
 type IUserRepository interface {
@@ -27,5 +19,7 @@ func NewUserRepository() IUserRepository {
 }
 
 func (u *userRepository) GetUserByEmail(email string) bool {
-	return true
+	// SELECT * FROM users WHERE email = '??' ORDER BY email
+	row := global.Mdb.Table(TABLE_NAME_GOCRMUSER).Where("usr_email = ?", email).First(&model.GoCrmUser{}).RowsAffected
+	return row != NUMBER_NULL
 }
