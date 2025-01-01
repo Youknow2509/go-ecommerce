@@ -12,14 +12,24 @@ RESET_COLOR = \033[0m
 GO = go
 WIRE = wire
 
+# List Variables Goose
+GOOSE_NAME ?= GO_ECOMMERCE
+GOOSE_DRIVER ?= mysql
+GOOSE_DB_DSN = TODO Compelete
+GOOSE_MIGRATION_DSN ?= sql
+
 # Phony Targets
-.PHONY: help run_server clear_log cre_env docker_build docker_run docker_stop docker_stop_v 
-.PHONY: exec_mysql exec_redis exec_kafka_ui wire regenerate_wire deps build test coverage
+.PHONY: help
+.PHONY: install_path_pkg run_server wire regenerate_wire clear_log cre_env deps build test coverage
+.PHONY: docker_build docker_run docker_stop docker_stop_v
+.PHONY: exec_mysql mysql_dump exec_redis exec_kafka_ui
+.PHONY: goose_create goose_up goose_down goose_status goose_fix goose_redo goose_reset goose_clean
 
 # Help Command
 help:
 	@echo "${GREEN_COLOR_BG}Usage: make [command]${RESET_COLOR}"
 	@echo "Commands:"
+	@echo "\t ${YELLOW_COLOR_BG}install_path_pkg${RESET_COLOR} \t Add the Go binary directory to your PATH"
 	@echo "\t ${YELLOW_COLOR_BG}run_server${RESET_COLOR} \t Run server in development mode"
 	@echo "\t ${YELLOW_COLOR_BG}wire${RESET_COLOR} \t Generate Wire dependencies"
 	@echo "\t ${YELLOW_COLOR_BG}regenerate_wire${RESET_COLOR} \t Force regenerate Wire dependencies"
@@ -39,6 +49,63 @@ help:
 	@echo "\t ${YELLOW_COLOR_BG}mysql_dump${RESET_COLOR} \t Render SQL file in database"
 	@echo "\t ${YELLOW_COLOR_BG}exec_redis${RESET_COLOR} \t Execute Redis CLI"
 	@echo "\t ${YELLOW_COLOR_BG}exec_kafka_ui${RESET_COLOR} \t Open Kafka UI"
+	@echo "\nGoose Migration Commands:"
+	@echo "\t ${YELLOW_COLOR_BG}goose_create${RESET_COLOR} \t Create a new migration"
+	@echo "\t ${YELLOW_COLOR_BG}goose_up${RESET_COLOR} \t Run all available migrations"
+	@echo "\t ${YELLOW_COLOR_BG}goose_down${RESET_COLOR} \t Rollback the most recent migration"
+	@echo "\t ${YELLOW_COLOR_BG}goose_status${RESET_COLOR} \t Show the status of all migrations"
+	@echo "\t ${YELLOW_COLOR_BG}goose_fix${RESET_COLOR} \t Fix the last migration"
+	@echo "\t ${YELLOW_COLOR_BG}goose_redo${RESET_COLOR} \t Rollback and re-run the most recent migration"
+	@echo "\t ${YELLOW_COLOR_BG}goose_reset${RESET_COLOR} \t Rollback all migrations"
+	@echo "\t ${YELLOW_COLOR_BG}goose_clean${RESET_COLOR} \t Remove all migrations"
+
+# Goosee - Create a new migration
+goose_create:
+	@echo "${YELLOW_COLOR_BG}Creating a new migration${RESET_COLOR}"
+	goose -dir migrations create $(GOOSE_NAME) sql
+	@echo "${GREEN_COLOR_BG}Migration created${RESET_COLOR}"
+
+# Goose - Run all available migrations
+goose_up:
+	@echo "${YELLOW_COLOR_BG}Running all available migrations${RESET_COLOR}"
+	goose -dir migrations mysql "$(GOOSE_DB_DSN)" up
+	@echo "${GREEN_COLOR_BG}Migrations completed${RESET_COLOR}"
+
+# Goose - Rollback the most recent migration
+goose_down:
+	@echo "${YELLOW_COLOR_BG}Rolling back the most recent migration${RESET_COLOR}"
+	goose -dir migrations mysql "$(GOOSE_DB_DSN)" down
+	@echo "${GREEN_COLOR_BG}Migration rolled back${RESET_COLOR}"
+
+# Goose - Show the status of all migrations
+goose_status:
+	@echo "${YELLOW_COLOR_BG}Showing the status of all migrations${RESET_COLOR}"
+	goose -dir migrations mysql "$(GOOSE_DB_DSN)" status
+	@echo "${GREEN_COLOR_BG}Migration status displayed${RESET_COLOR}"
+
+# Goose - Fix the last migration
+goose_fix:
+	@echo "${YELLOW_COLOR_BG}Fixing the last migration${RESET_COLOR}"
+	goose -dir migrations mysql "$(GOOSE_DB_DSN)" fix
+	@echo "${GREEN_COLOR_BG}Migration fixed${RESET_COLOR}"
+
+# Goose - Rollback and re-run the most recent migration
+goose_redo:
+	@echo "${YELLOW_COLOR_BG}Rolling back and re-running the most recent migration${RESET_COLOR}"
+	goose -dir migrations mysql "$(GOOSE_DB_DSN)" redo
+	@echo "${GREEN_COLOR_BG}Migration redone${RESET_COLOR}"
+
+# Goose - Rollback all migrations
+goose_reset:
+	@echo "${YELLOW_COLOR_BG}Rolling back all migrations${RESET_COLOR}"
+	goose -dir migrations mysql "$(GOOSE_DB_DSN)" reset
+	@echo "${GREEN_COLOR_BG}Migrations reset${RESET_COLOR}"
+
+# Goose - Remove all migrations
+goose_clean:
+	@echo "${YELLOW_COLOR_BG}Removing all migrations${RESET_COLOR}"
+	goose -dir migrations mysql "$(GOOSE_DB_DSN)" clean
+	@echo "${GREEN_COLOR_BG}Migrations removed${RESET_COLOR}"
 
 # Wire Generation
 wire:
@@ -142,3 +209,10 @@ mysql_dump:
 	@echo "${YELLOW_COLOR_BG}Renaming SQL file in database${RESET_COLOR}"
 	docker exec -i mysql_v8_container mysqldump -uroot --databases go_ecommerce --add-drop-database --add-drop-table --add-drop-trigger --add-locks --no-data > migrations/go_ecommerce.sql -p
 	@echo "${GREEN_COLOR_BG}SQL file rendered${RESET_COLOR}"
+
+# Add Go Binary Directory to PATH
+install_path_pkg:
+	@echo "${YELLOW_COLOR_BG}Adding Go binary directory to PATH${RESET_COLOR}"
+	export PATH=$PATH:$(go env GOPATH)/bin
+	@echo "${GREEN_COLOR_BG}Go binary directory added to PATH${RESET_COLOR}"
+

@@ -12,6 +12,8 @@
     + [lumberjack](https://github.com/natefinch/lumberjack) -  Manger file logging (size file, max age file, max backup file, ...)
 - Handle database:
     + [gorm](https://github.com/go-gorm/gorm)
+    + [sqlc](https://github.com/sqlc-dev/sqlc) - Fast generate code for SQL and handle 
+    + [goose](https://github.com/pressly/goose) - Manage version of database
     + [uuid google](https://github.com/google/uuid) - Google UUID for generate UUID
 - Handle authentication:
 
@@ -26,3 +28,5 @@
       + [kafka-ui](https://github.com/provectus/kafka-ui)
 
 - Handle dependencies injection wiht [wire](https://github.com/google/wire)
+
+- Handle change data capture (CDC) with [debezium](https://debezium.io/)
