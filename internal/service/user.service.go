@@ -1,7 +1,14 @@
 package service
 
 import (
+	"fmt"
+	"strconv"
+	"time"
+
 	rp "github.com/Youknow2509/go-ecommerce/internal/repo"
+	"github.com/Youknow2509/go-ecommerce/internal/utils/crypto"
+	"github.com/Youknow2509/go-ecommerce/internal/utils/random"
+	"github.com/Youknow2509/go-ecommerce/internal/utils/sendto"
 	"github.com/Youknow2509/go-ecommerce/response"
 )
 
@@ -27,22 +34,53 @@ type IUserService interface {
 }
 
 type userService struct {
-	userRepo rp.IUserRepository
+	userRepo     rp.IUserRepository
+	userAuthRepo rp.IUserAuthRepository
 	// ...
 }
 
-func NewUserService(u rp.IUserRepository) IUserService {
+func NewUserService(
+	userRepo rp.IUserRepository,
+	userAuthRepo rp.IUserAuthRepository,
+) IUserService {
 	return &userService{
-		userRepo: u,
+		userRepo:     userRepo,
+		userAuthRepo: userAuthRepo,
 	}
 }
 
 // RegisterService implements IUserService.
 func (u *userService) RegisterService(email string, purpose string) int {
-	// Check email exists
+	// 0. hash email
+	hashEmail := crypto.GetHash(email)
+	fmt.Printf("Hash email is ::: %s\n", hashEmail)
+	// 5. check opt is available
+	// TODO
+
+	// 6. user spam ...
+	// TODO
+
+	// 1. check email exists in db
 	if u.userRepo.GetUserByEmail(email) {
 		return response.ErrCodeUserHasExist
 	}
-	
-	return response.ErrCodeSuccess
+	// 2. new otp ...
+	otp := random.GenerateSixDigitOtp()
+	if purpose == "TEST_USER" {
+		otp = 123456
+	}
+
+	fmt.Printf("OTP is ::: %d\n", otp)
+	// 3. save otp in Redis with expiration time
+	err := u.userAuthRepo.AddOtp(hashEmail, otp, int64(10*time.Minute))
+	if err != nil {
+		return response.ErrInvalidOTP
+	}
+	// 4. send otp to email 
+	err = sendto.SendTextEmailOTP([]string{email}, "lytranvinh.work@gmail.com", strconv.Itoa(otp))
+	if err != nil {
+		return response.ErrSendEmailOTP
+	}
+
+	return 0
 }
