@@ -5,10 +5,11 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/Youknow2509/go-ecommerce/global"
 	rp "github.com/Youknow2509/go-ecommerce/internal/repo"
 	"github.com/Youknow2509/go-ecommerce/internal/utils/crypto"
 	"github.com/Youknow2509/go-ecommerce/internal/utils/random"
-	"github.com/Youknow2509/go-ecommerce/internal/utils/sendto"
+	"github.com/Youknow2509/go-ecommerce/internal/utils/sendto/create"
 	"github.com/Youknow2509/go-ecommerce/response"
 )
 
@@ -77,10 +78,12 @@ func (u *userService) RegisterService(email string, purpose string) int {
 		return response.ErrInvalidOTP
 	}
 	// 4. send otp to email 
-	err = sendto.SendTextEmailOTP([]string{email}, "lytranvinh.work@gmail.com", strconv.Itoa(otp))
+	// err = create.FactoryCreateSendTo("sendgrid").SendTextEmailOTP([]string{email}, "lytranvinh.work@gmail.com", strconv.Itoa(otp))
+	err = create.FactoryCreateSendTo("sendgrid").SendTemplateEmailOTP([]string{email}, "lytranvinh.work@gmail.com", "otp-auth.html", map[string]interface{}{"otp": strconv.Itoa(otp)})
 	if err != nil {
 		return response.ErrSendEmailOTP
 	}
+	global.Logger.Info(fmt.Sprintf("OTP is sent to email: %s sucess", email))
 
-	return 0
+	return response.ErrCodeSuccess
 }
