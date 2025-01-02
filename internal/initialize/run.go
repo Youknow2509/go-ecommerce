@@ -1,9 +1,8 @@
 package initialize
 
 import (
-	"fmt"
 	"strconv"
-
+	"fmt"
 	"github.com/Youknow2509/go-ecommerce/global"
 )
 
@@ -11,8 +10,8 @@ import (
 func Run() {
 	// load configuration
 	LoadConfig()
-	fmt.Println("@@@@ Loaded configuration")
-
+	fmt.Println("@@@ Loader configuration")
+	
 	// initialize logger
 	InitLogger()
 	global.Logger.Info("Logger initialized")

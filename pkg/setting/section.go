@@ -2,10 +2,16 @@ package setting
 
 // Struct Config
 type Config struct {
-	Server ServerSetting `mapstructure:"server"`
-	MySQL  MySQLSetting  `mapstructure:mysql"`
-	Logger LoggerSetting `mapstructure:"logger"`
-	Redis  RedisSetting  `mapstructure:"redis"`
+	Server   ServerSetting   `mapstructure:"server"`
+	MySQL    MySQLSetting    `mapstructure:mysql"`
+	Logger   LoggerSetting   `mapstructure:"logger"`
+	Redis    RedisSetting    `mapstructure:"redis"`
+	SendGrid SendGridSetting `mapstructure:"send_grid"`
+}
+
+// SendGrid Struct Settings
+type SendGridSetting struct {
+	APIKey string `mapstructure:"api_key"`
 }
 
 // Redis Struct
@@ -44,3 +50,4 @@ type LoggerSetting struct {
 	MaxAge     int    `mapstructure:"max_age"`
 	Compress   bool   `mapstructure:"compress"`
 }
+
