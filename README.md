@@ -30,3 +30,7 @@
 - Handle dependencies injection wiht [wire](https://github.com/google/wire)
 
 - Handle change data capture (CDC) with [debezium](https://debezium.io/)
+
+- Handle send main:
+    + [sendgrid](https://sendgrid.com)
+    + [smtp](https://pkg.go.dev/net/smtp)
