@@ -24,6 +24,10 @@ func Run() {
 	InitMysqlC()
 	global.Logger.Info("MysqlC initialized")
 
+	// initialize service interface
+	InitServiceInterface()
+	global.Logger.Info("Service interface initialized")
+
 	// connect to redis
 	InitRedis()
 	global.Logger.Info("Redis initialized")
