@@ -15,8 +15,10 @@ WIRE = wire
 # List Variables Goose
 GOOSE_NAME ?= GO_ECOMMERCE
 GOOSE_DRIVER ?= mysql
-GOOSE_DB_DSN = TODO Compelete
-GOOSE_MIGRATION_DSN ?= sql
+GOOSE_DB_DSN = "root:root123@tcp(127.0.0.1:3306)/go_ecommerce"
+GOOSE_MIGRATION_DSN ?= sql/schema
+GOOSE_PATH_SCHEMA ?= sql/schema
+GOOSE_PATH_QUERIES = sql/queries
 
 # Phony Targets
 .PHONY: help
@@ -58,53 +60,61 @@ help:
 	@echo "\t ${YELLOW_COLOR_BG}goose_redo${RESET_COLOR} \t Rollback and re-run the most recent migration"
 	@echo "\t ${YELLOW_COLOR_BG}goose_reset${RESET_COLOR} \t Rollback all migrations"
 	@echo "\t ${YELLOW_COLOR_BG}goose_clean${RESET_COLOR} \t Remove all migrations"
+	@echo "\nSQLC Commands:"
+	@echo "\t ${YELLOW_COLOR_BG}sqlc_generate${RESET_COLOR} \t Generate SQLC queries"
+
+# SQLC - Generate
+sqlc_generate:
+	@echo "${YELLOW_COLOR_BG}Generating SQLC queries${RESET_COLOR}"
+	sqlc generate
+	@echo "${GREEN_COLOR_BG}SQLC queries generated${RESET_COLOR}"
 
 # Goosee - Create a new migration
 goose_create:
 	@echo "${YELLOW_COLOR_BG}Creating a new migration${RESET_COLOR}"
-	goose -dir migrations create $(GOOSE_NAME) sql
+	goose -dir ${GOOSE_PATH_SCHEMA} create $(GOOSE_NAME) sql
 	@echo "${GREEN_COLOR_BG}Migration created${RESET_COLOR}"
 
 # Goose - Run all available migrations
 goose_up:
 	@echo "${YELLOW_COLOR_BG}Running all available migrations${RESET_COLOR}"
-	goose -dir migrations mysql "$(GOOSE_DB_DSN)" up
+	goose -dir ${GOOSE_PATH_SCHEMA} ${GOOSE_DRIVER} $(GOOSE_DB_DSN) up
 	@echo "${GREEN_COLOR_BG}Migrations completed${RESET_COLOR}"
 
 # Goose - Rollback the most recent migration
 goose_down:
 	@echo "${YELLOW_COLOR_BG}Rolling back the most recent migration${RESET_COLOR}"
-	goose -dir migrations mysql "$(GOOSE_DB_DSN)" down
+	goose -dir ${GOOSE_PATH_SCHEMA} ${GOOSE_DRIVER} $(GOOSE_DB_DSN) down
 	@echo "${GREEN_COLOR_BG}Migration rolled back${RESET_COLOR}"
 
 # Goose - Show the status of all migrations
 goose_status:
 	@echo "${YELLOW_COLOR_BG}Showing the status of all migrations${RESET_COLOR}"
-	goose -dir migrations mysql "$(GOOSE_DB_DSN)" status
+	goose -dir ${GOOSE_PATH_SCHEMA} ${GOOSE_DRIVER} $(GOOSE_DB_DSN) status
 	@echo "${GREEN_COLOR_BG}Migration status displayed${RESET_COLOR}"
 
 # Goose - Fix the last migration
 goose_fix:
 	@echo "${YELLOW_COLOR_BG}Fixing the last migration${RESET_COLOR}"
-	goose -dir migrations mysql "$(GOOSE_DB_DSN)" fix
+	goose -dir ${GOOSE_PATH_SCHEMA} ${GOOSE_DRIVER} $(GOOSE_DB_DSN) fix
 	@echo "${GREEN_COLOR_BG}Migration fixed${RESET_COLOR}"
 
 # Goose - Rollback and re-run the most recent migration
 goose_redo:
 	@echo "${YELLOW_COLOR_BG}Rolling back and re-running the most recent migration${RESET_COLOR}"
-	goose -dir migrations mysql "$(GOOSE_DB_DSN)" redo
+	goose -dir ${GOOSE_PATH_SCHEMA} ${GOOSE_DRIVER} $(GOOSE_DB_DSN) redo
 	@echo "${GREEN_COLOR_BG}Migration redone${RESET_COLOR}"
 
 # Goose - Rollback all migrations
 goose_reset:
 	@echo "${YELLOW_COLOR_BG}Rolling back all migrations${RESET_COLOR}"
-	goose -dir migrations mysql "$(GOOSE_DB_DSN)" reset
+	goose -dir ${GOOSE_PATH_SCHEMA} ${GOOSE_DRIVER} $(GOOSE_DB_DSN) reset
 	@echo "${GREEN_COLOR_BG}Migrations reset${RESET_COLOR}"
 
 # Goose - Remove all migrations
 goose_clean:
 	@echo "${YELLOW_COLOR_BG}Removing all migrations${RESET_COLOR}"
-	goose -dir migrations mysql "$(GOOSE_DB_DSN)" clean
+	goose -dir ${GOOSE_PATH_SCHEMA} ${GOOSE_DRIVER} $(GOOSE_DB_DSN) clean
 	@echo "${GREEN_COLOR_BG}Migrations removed${RESET_COLOR}"
 
 # Wire Generation
