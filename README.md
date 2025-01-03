@@ -12,8 +12,8 @@
     + [lumberjack](https://github.com/natefinch/lumberjack) -  Manger file logging (size file, max age file, max backup file, ...)
 - Handle database:
     + [gorm](https://github.com/go-gorm/gorm)
-    + [sqlc](https://github.com/sqlc-dev/sqlc) - Fast generate code for SQL and handle 
-    + [goose](https://github.com/pressly/goose) - Manage version of database
+    + [sqlc](https://github.com/sqlc-dev/sqlc) - Fast generate code for SQL and handle ( gen model, exec query, ...)
+    + [goose](https://github.com/pressly/goose) - Manage version of database - migration
     + [uuid google](https://github.com/google/uuid) - Google UUID for generate UUID
 - Handle authentication:
 
