@@ -30,8 +30,7 @@ func Run() {
 
 	// connect to kafka
 	InitKafka()
-
-	// TODO ...
+	global.Logger.Info("Kafka initialized")
 
 	// connect to Router
 	r := InitRouter()
