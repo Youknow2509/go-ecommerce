@@ -9,6 +9,7 @@ import (
 	rp "github.com/Youknow2509/go-ecommerce/internal/repo"
 	"github.com/Youknow2509/go-ecommerce/internal/utils/crypto"
 	"github.com/Youknow2509/go-ecommerce/internal/utils/random"
+	"github.com/Youknow2509/go-ecommerce/internal/utils/sendto"
 	"github.com/Youknow2509/go-ecommerce/internal/utils/sendto/create"
 	"github.com/Youknow2509/go-ecommerce/response"
 )
@@ -78,8 +79,9 @@ func (u *userService) RegisterService(email string, purpose string) int {
 		return response.ErrInvalidOTP
 	}
 	// 4. send otp to email 
-	// err = create.FactoryCreateSendTo("sendgrid").SendTextEmailOTP([]string{email}, "lytranvinh.work@gmail.com", strconv.Itoa(otp))
-	err = create.FactoryCreateSendTo("sendgrid").SendTemplateEmailOTP([]string{email}, "lytranvinh.work@gmail.com", "otp-auth.html", map[string]interface{}{"otp": strconv.Itoa(otp)})
+	// err = create.FactoryCreateSendTo(sendto.TYPE_SENDGRID).SendTextEmailOTP([]string{email}, "lytranvinh.work@gmail.com", strconv.Itoa(otp))
+	// err = create.FactoryCreateSendTo(sendto.TYPE_SENDGRID).SendTemplateEmailOTP([]string{email}, "lytranvinh.work@gmail.com", "otp-auth.html", map[string]interface{}{"otp": strconv.Itoa(otp)})
+	err = create.FactoryCreateSendTo(sendto.TYPE_API).SendAPIEmailOTP(email, "lytranvinh.work@gmail.com", strconv.Itoa(otp))
 	if err != nil {
 		return response.ErrSendEmailOTP
 	}

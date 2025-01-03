@@ -1,8 +1,6 @@
 package create
 
 import (
-	"strings"
-
 	"github.com/Youknow2509/go-ecommerce/internal/utils/sendto"
 	"github.com/Youknow2509/go-ecommerce/internal/utils/sendto/sendgrid"
 	"github.com/Youknow2509/go-ecommerce/internal/utils/sendto/smtp"
@@ -12,10 +10,12 @@ import (
 func FactoryCreateSendTo(
 	typeSendTo string,
 ) sendto.ISendTo {
-	switch strings.ToLower(typeSendTo) {
-	case "smtp":
+	switch typeSendTo {
+	case sendto.TYPE_API:
+		return sendto.NewSendToWithApi()
+	case sendto.TYPE_SMTP:
 		return smtp.NewSendToWithSMTP()
-	case "sendgrid":
+	case sendto.TYPE_SENDGRID:
 		return sendgrid.NewSendToWithSendGrid()
 	default:
 		return nil

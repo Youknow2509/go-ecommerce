@@ -28,6 +28,11 @@ func NewSendToWithSMTP() sendto.ISendTo {
 	return &sendToWithSMTP{}
 }
 
+// SendAPIEmailOTP implements sendto.ISendTo.
+func (s *sendToWithSMTP) SendAPIEmailOTP(to string, from string, otp string) error {
+	panic("unimplemented")
+}
+
 // Send a simple text OTP email
 func (s *sendToWithSMTP) SendTextEmailOTP(
 	to []string,
@@ -66,7 +71,7 @@ func (s *sendToWithSMTP) SendTemplateEmailOTP(
 	dataTemplate map[string]interface{},
 ) error {
 	htmlBody, err := getMailTemplate(nameTemplate, dataTemplate)
-	
+
 	if err != nil {
 		return err
 	}
