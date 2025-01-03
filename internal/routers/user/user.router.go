@@ -4,6 +4,7 @@ import (
 	// "github.com/Youknow2509/go-ecommerce/internal/controller"
 	// "github.com/Youknow2509/go-ecommerce/internal/repo"
 	// "github.com/Youknow2509/go-ecommerce/internal/service"
+	"github.com/Youknow2509/go-ecommerce/internal/controller/account"
 	"github.com/Youknow2509/go-ecommerce/internal/wire"
 	"github.com/gin-gonic/gin"
 )
@@ -30,6 +31,7 @@ func (ur *UserRouter) InitUserRouter(Router *gin.RouterGroup) {
 	userRouterPublic := Router.Group("/user")
 	{
 		userRouterPublic.POST("/register", userController.Register)
+		userRouterPublic.POST("/login", account.Login.Login)
 		// userRouterPublic.POST("/send_otp")
 	}
 
