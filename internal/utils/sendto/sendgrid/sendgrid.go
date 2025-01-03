@@ -57,6 +57,11 @@ func (s *sendToWithSendGrid) SendTextEmailOTP(
 	return nil
 }
 
+// SendAPIEmailOTP implements sendto.ISendTo.
+func (s *sendToWithSendGrid) SendAPIEmailOTP(to string, from string, otp string) error {
+	panic("unimplemented")
+}
+
 // Send a template html OTP email
 func (s *sendToWithSendGrid) SendTemplateEmailOTP(
 	to []string,
@@ -70,7 +75,7 @@ func (s *sendToWithSendGrid) SendTemplateEmailOTP(
 	if err != nil {
 		global.Logger.Error("Error get mail htmp:: ", zap.Error(err))
 		return err
-    }
+	}
 
 	for _, email := range to {
 		mail := &Mail{
@@ -78,9 +83,9 @@ func (s *sendToWithSendGrid) SendTemplateEmailOTP(
 				Address: from,
 				Name:    "Admin",
 			},
-			To:               email,
-			Subject:          "OTP Verification",
-			HtmlContent:      mailTemplateHtml,
+			To:          email,
+			Subject:     "OTP Verification",
+			HtmlContent: mailTemplateHtml,
 		}
 		err := sendMail(*mail)
 		if err != nil {

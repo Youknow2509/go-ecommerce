@@ -51,5 +51,5 @@ smtp:
   password: 
 
 send_grid:
-  api_key:
+  api_key: "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"
 
