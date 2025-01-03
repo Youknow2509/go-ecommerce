@@ -1,17 +1,18 @@
 package service
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
-	"strconv"
 	"time"
 
 	"github.com/Youknow2509/go-ecommerce/global"
 	rp "github.com/Youknow2509/go-ecommerce/internal/repo"
 	"github.com/Youknow2509/go-ecommerce/internal/utils/crypto"
 	"github.com/Youknow2509/go-ecommerce/internal/utils/random"
-	"github.com/Youknow2509/go-ecommerce/internal/utils/sendto"
-	"github.com/Youknow2509/go-ecommerce/internal/utils/sendto/create"
 	"github.com/Youknow2509/go-ecommerce/response"
+	"github.com/segmentio/kafka-go"
+	"go.uber.org/zap"
 )
 
 // type UserService struct {
@@ -81,11 +82,30 @@ func (u *userService) RegisterService(email string, purpose string) int {
 	// 4. send otp to email 
 	// err = create.FactoryCreateSendTo(sendto.TYPE_SENDGRID).SendTextEmailOTP([]string{email}, "lytranvinh.work@gmail.com", strconv.Itoa(otp))
 	// err = create.FactoryCreateSendTo(sendto.TYPE_SENDGRID).SendTemplateEmailOTP([]string{email}, "lytranvinh.work@gmail.com", "otp-auth.html", map[string]interface{}{"otp": strconv.Itoa(otp)})
-	err = create.FactoryCreateSendTo(sendto.TYPE_API).SendAPIEmailOTP(email, "lytranvinh.work@gmail.com", strconv.Itoa(otp))
-	if err != nil {
-		return response.ErrSendEmailOTP
-	}
-	global.Logger.Info(fmt.Sprintf("OTP is sent to email: %s sucess", email))
+	// err = create.FactoryCreateSendTo(sendto.TYPE_API).SendAPIEmailOTP(email, "lytranvinh.work@gmail.com", strconv.Itoa(otp))
+	// if err != nil {
+	// 	return response.ErrSendEmailOTP
+	// }
+	// global.Logger.Info(fmt.Sprintf("OTP is sent to email: %s sucess", email))
 
-	return response.ErrCodeSuccess
+	// handle send to kafka
+	body := make(map[string]interface{})
+	body["email"] = email
+	body["otp"] = otp
+	// requestBody
+	requestBody, _ := json.Marshal(body)
+	// create message in kafaka
+	msg := kafka.Message{
+        Key:   []byte("otp-auth"),
+        Value: []byte(requestBody),
+		Time: time.Now(),
+    }
+	err = global.KafkaProducer.WriteMessages(context.Background(), msg)
+	if err!= nil {
+        global.Logger.Error("Error sending message to Kafka: ", zap.Error(err))
+        return response.ErrSendEmailOTP
+    }
+    // 7. return success
+    return response.ErrCodeSuccess
+
 }

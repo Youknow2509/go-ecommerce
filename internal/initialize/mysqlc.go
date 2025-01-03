@@ -27,9 +27,9 @@ func InitMysqlC() {
 
 	db, err := sql.Open("mysql", s)
 
-	checkErrorPanicC(err, "MySQL connection failed")
+	checkErrorPanicC(err, "SQLC connection failed")
 
-	global.Logger.Info("MySQL connection successful")
+	global.Logger.Info("SQLC connection successful")
 	global.Mdbc = db
 
 	// set Pool
