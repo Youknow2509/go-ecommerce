@@ -13,6 +13,7 @@ GO = go
 WIRE = wire
 
 # List Variables Goose
+GOOSE=goose
 GOOSE_NAME ?= GO_ECOMMERCE
 GOOSE_DRIVER ?= mysql
 GOOSE_DB_DSN = "root:root123@tcp(127.0.0.1:3306)/go_ecommerce"
@@ -72,7 +73,7 @@ sqlc_generate:
 # Goosee - Create a new migration
 goose_create:
 	@echo "${YELLOW_COLOR_BG}Creating a new migration${RESET_COLOR}"
-	goose -dir ${GOOSE_PATH_SCHEMA} create $(GOOSE_NAME) sql
+	${GOOSE} -dir ${GOOSE_PATH_SCHEMA} create $(NAME) sql
 	@echo "${GREEN_COLOR_BG}Migration created${RESET_COLOR}"
 
 # Goose - Run all available migrations

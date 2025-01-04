@@ -1,123 +1,144 @@
--- MySQL dump 10.13  Distrib 8.0.40, for Linux (aarch64)
---
--- Host: localhost    Database: go_ecommerce
--- ------------------------------------------------------
--- Server version	8.0.40
+CREATE TABLE `pre_go_acc_user_9999` (
+    `user_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'User  ID',
+    `user_account` VARCHAR(255) NOT NULL COMMENT 'User  account',
+    `user_nickname` VARCHAR(255) NULL COMMENT 'User  nickname',
+    `user_avatar` VARCHAR(255) NULL COMMENT 'User  avatar',
+    `user_state` TINYINT UNSIGNED NOT NULL COMMENT 'User  state: 0-Locked, 1-Activated, 2-Not Activated',
+    `user_mobile` VARCHAR(20) NULL COMMENT 'Mobile phone number',
+    `user_gender` TINYINT UNSIGNED NULL COMMENT 'User  gender: 0-Secret, 1-Male, 2-Female',
+    `user_birthday` DATE NULL COMMENT 'User  birthday',
+    `user_email` VARCHAR(255) NULL COMMENT 'User  email address',
+    `user_is_authentication` TINYINT UNSIGNED NOT NULL COMMENT 'Authentication status: 0-Not Authenticated, 1-Pending, 2-Authenticated, 3-Failed',
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Record creation time',
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Record update time'
+);
+ALTER TABLE
+    `pre_go_acc_user_9999` ADD UNIQUE `pre_go_acc_user_9999_user_account_unique`(`user_account`);
+ALTER TABLE
+    `pre_go_acc_user_9999` ADD INDEX `pre_go_acc_user_9999_user_state_index`(`user_state`);
+ALTER TABLE
+    `pre_go_acc_user_9999` ADD INDEX `pre_go_acc_user_9999_user_mobile_index`(`user_mobile`);
+ALTER TABLE
+    `pre_go_acc_user_9999` ADD INDEX `pre_go_acc_user_9999_user_email_index`(`user_email`);
+ALTER TABLE
+    `pre_go_acc_user_9999` ADD INDEX `pre_go_acc_user_9999_user_is_authentication_index`(`user_is_authentication`);
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+CREATE TABLE `pre_go_acc_user_base_9999` (
+    `user_id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `user_account` VARCHAR(255) NOT NULL,
+    `user_password` VARCHAR(255) NOT NULL,
+    `user_salt` VARCHAR(255) NOT NULL,
+    `user_login_time` TIMESTAMP NULL DEFAULT NULL,
+    `user_logout_time` TIMESTAMP NULL DEFAULT NULL,
+    `user_login_ip` VARCHAR(45) NULL DEFAULT NULL,
+    `user_created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `user_updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+ALTER TABLE
+    `pre_go_acc_user_base_9999` ADD UNIQUE `pre_go_acc_user_base_9999_user_account_unique`(`user_account`);
 
---
--- Current Database: `go_ecommerce`
---
+CREATE TABLE `pre_go_acc_user_verify_9999`(
+    `verify_id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `verify_otp` VARCHAR(6) NOT NULL,
+    `verify_key` VARCHAR(255) NOT NULL,
+    `verify_key_hash` VARCHAR(255) NOT NULL,
+    `verify_type` INT NULL DEFAULT '1',
+    `is_verified` INT NULL,
+    `is_deleted` INT NULL,
+    `verify_created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP(), `verify_updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP());
+ALTER TABLE
+    `pre_go_acc_user_verify_9999` ADD INDEX `pre_go_acc_user_verify_9999_verify_otp_index`(`verify_otp`);
+ALTER TABLE
+    `pre_go_acc_user_verify_9999` ADD UNIQUE `pre_go_acc_user_verify_9999_verify_key_unique`(`verify_key`);
 
-/*!40000 DROP DATABASE IF EXISTS `go_ecommerce`*/;
+CREATE TABLE `pre_java_acc_role_9999`(
+    `role_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `name_role` VARCHAR(255) NULL,
+    `create_user_id` BIGINT NULL
+);
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `go_ecommerce` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE TABLE `pre_java_acc_user_role_9999`(
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `user_id` BIGINT NULL,
+    `role_id` BIGINT NULL
+);
+ALTER TABLE
+    `pre_java_acc_user_role_9999` ADD INDEX `pre_java_acc_user_role_9999_user_id_index`(`user_id`);
+ALTER TABLE
+    `pre_java_acc_user_role_9999` ADD INDEX `pre_java_acc_user_role_9999_role_id_index`(`role_id`);
 
-USE `go_ecommerce`;
+CREATE TABLE `pre_java_acc_authority_9999`(
+    `authority_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `authority_name` VARCHAR(255) NOT NULL,
+    `menu_pid` VARCHAR(255) NULL DEFAULT '0',
+    `authority_url` VARCHAR(255) NOT NULL,
+    `authority_prefix` VARCHAR(255) NOT NULL,
+    `create_user_id` BIGINT NOT NULL
+);
 
---
--- Table structure for table `go_crm_user`
---
+CREATE TABLE `pre_java_acc_role_authority_9999`(
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `authority_id` BIGINT NOT NULL,
+    `role_id` BIGINT NOT NULL
+);
 
-DROP TABLE IF EXISTS `go_crm_user`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `go_crm_user` (
-  `usr_id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'Account ID',
-  `usr_email` varchar(30) NOT NULL DEFAULT '' COMMENT 'Email',
-  `usr_phone` varchar(15) NOT NULL DEFAULT '' COMMENT 'Phone Number',
-  `usr_username` varchar(30) NOT NULL DEFAULT '' COMMENT 'Username',
-  `usr_password` varchar(32) NOT NULL DEFAULT '' COMMENT 'Password',
-  `usr_created_at` int NOT NULL DEFAULT '0' COMMENT 'Created Time',
-  `usr_updated_at` int NOT NULL DEFAULT '0' COMMENT 'Updated Time',
-  `usr_create_ip_at` varchar(12) NOT NULL DEFAULT '' COMMENT 'Created IP',
-  `usr_last_login_at` int NOT NULL DEFAULT '0' COMMENT 'Last Login Time',
-  `usr_last_login_ip_at` varchar(12) NOT NULL DEFAULT '' COMMENT 'Last Login IP',
-  `usr_login_times` int NOT NULL DEFAULT '0' COMMENT 'Login Times',
-  `usr_status` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Status',
-  PRIMARY KEY (`usr_id`),
-  KEY `idx_email` (`usr_email`),
-  KEY `idx_phone` (`usr_phone`),
-  KEY `idx_username` (`usr_username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Account';
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE `pre_go_product_base_9999`(
+    `spu_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `category_id` BIGINT NOT NULL,
+    `shop_id` BIGINT NOT NULL,
+    `brand_id` BIGINT NOT NULL,
+    `spu_name` VARCHAR(255) NOT NULL,
+    `spu_description` VARCHAR(255) NOT NULL,
+    `spu_img_url` VARCHAR(255) NOT NULL,
+    `spu_video_url` VARCHAR(255) NOT NULL,
+    `spu_sort` BIGINT NOT NULL,
+    `spu_price` DECIMAL(8, 2) NOT NULL,
+    `spu_status` BIGINT NOT NULL,
+    `spu_ created_at` TIMESTAMP NOT NULL,
+    `spu_ updated_at` TIMESTAMP NOT NULL,
+    `spu_deleted_at` TIMESTAMP NOT NULL
+);
+ALTER TABLE
+    `pre_go_product_base_9999` ADD UNIQUE `pre_go_product_base_9999_spu_name_spu_deleted_at_unique`(`spu_name`, `spu_deleted_at`);
 
---
--- Table structure for table `go_db_role`
---
+CREATE TABLE `pre_go_product_sku_9999`(
+    `sku_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `spu_id` BIGINT NOT NULL,
+    `sku_price` DECIMAL(8, 2) NOT NULL,
+    `sku_stock` BIGINT NOT NULL,
+    `sku_attribute_value` VARCHAR(255) NOT NULL,
+    `sku_created_at` TIMESTAMP NOT NULL,
+    `sku_updated_at` TIMESTAMP NOT NULL,
+    `sku_deleted_at` TIMESTAMP NOT NULL
+);
 
-DROP TABLE IF EXISTS `go_db_role`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `go_db_role` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `created_at` datetime(3) DEFAULT NULL,
-  `updated_at` datetime(3) DEFAULT NULL,
-  `deleted_at` datetime(3) DEFAULT NULL,
-  `role_name` longtext,
-  `role_note` text,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uni_go_db_role_id` (`id`),
-  KEY `idx_go_db_role_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `go_db_user`
---
-
-DROP TABLE IF EXISTS `go_db_user`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `go_db_user` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` datetime(3) DEFAULT NULL,
-  `updated_at` datetime(3) DEFAULT NULL,
-  `deleted_at` datetime(3) DEFAULT NULL,
-  `uuid` char(255) NOT NULL,
-  `user_name` longtext,
-  `is_active` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uni_go_db_user_uuid` (`uuid`),
-  KEY `idx_go_db_user_deleted_at` (`deleted_at`),
-  KEY ` idx_uuid` (`uuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `go_user_roles`
---
-
-DROP TABLE IF EXISTS `go_user_roles`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `go_user_roles` (
-  `user_id` bigint unsigned NOT NULL,
-  `role_id` bigint NOT NULL,
-  PRIMARY KEY (`user_id`,`role_id`),
-  KEY `fk_go_user_roles_role` (`role_id`),
-  CONSTRAINT `fk_go_user_roles_role` FOREIGN KEY (`role_id`) REFERENCES `go_db_role` (`id`),
-  CONSTRAINT `fk_go_user_roles_user` FOREIGN KEY (`user_id`) REFERENCES `go_db_user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2024-12-30 10:47:11
+CREATE TABLE `pre_go_product_category_9999`(
+    `category_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `parent_id` BIGINT NOT NULL,
+    `category_name` VARCHAR(255) NOT NULL,
+    `has_active_children` BOOLEAN NOT NULL,
+    `category_spu_count` BIGINT NOT NULL,
+    `category_status` BIGINT NOT NULL,
+    `category_description` VARCHAR(255) NOT NULL,
+    `category_icon` VARCHAR(255) NOT NULL,
+    `category_sort` BIGINT NOT NULL,
+    `category_deleted_at` TIMESTAMP NOT NULL,
+    `category_created_at` TIMESTAMP NOT NULL,
+    `category_updated_at` TIMESTAMP NOT NULL
+);
+ALTER TABLE
+    `pre_go_product_base_9999` ADD CONSTRAINT `pre_go_product_base_9999_category_id_foreign` FOREIGN KEY(`category_id`) REFERENCES `pre_go_product_category_9999`(`category_id`);
+ALTER TABLE
+    `pre_go_product_sku_9999` ADD CONSTRAINT `pre_go_product_sku_9999_sku_id_foreign` FOREIGN KEY(`sku_id`) REFERENCES `pre_go_product_base_9999`(`spu_id`);
+ALTER TABLE
+    `pre_go_acc_user_verify_9999` ADD CONSTRAINT `pre_go_acc_user_verify_9999_verify_key_foreign` FOREIGN KEY(`verify_key`) REFERENCES `pre_go_acc_user_base_9999`(`user_account`);
+ALTER TABLE
+    `pre_go_acc_user_9999` ADD CONSTRAINT `pre_go_acc_user_9999_user_id_foreign` FOREIGN KEY(`user_id`) REFERENCES `pre_java_acc_user_role_9999`(`id`);
+ALTER TABLE
+    `pre_java_acc_authority_9999` ADD CONSTRAINT `pre_java_acc_authority_9999_authority_id_foreign` FOREIGN KEY(`authority_id`) REFERENCES `pre_java_acc_role_authority_9999`(`id`);
+ALTER TABLE
+    `pre_java_acc_role_9999` ADD CONSTRAINT `pre_java_acc_role_9999_role_id_foreign` FOREIGN KEY(`role_id`) REFERENCES `pre_java_acc_role_authority_9999`(`id`);
+ALTER TABLE
+    `pre_java_acc_user_role_9999` ADD CONSTRAINT `pre_java_acc_user_role_9999_user_id_foreign` FOREIGN KEY(`user_id`) REFERENCES `pre_java_acc_role_9999`(`role_id`);
+ALTER TABLE
+    `pre_go_acc_user_base_9999` ADD CONSTRAINT `pre_go_acc_user_base_9999_user_id_foreign` FOREIGN KEY(`user_id`) REFERENCES `pre_go_acc_user_9999`(`user_id`);
