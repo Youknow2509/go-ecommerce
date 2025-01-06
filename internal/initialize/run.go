@@ -1,9 +1,11 @@
 package initialize
 
 import (
-	"strconv"
 	"fmt"
+	"strconv"
+
 	"github.com/Youknow2509/go-ecommerce/global"
+	"github.com/Youknow2509/go-ecommerce/pkg/logger"
 )
 
 // Run all initialization
@@ -12,6 +14,11 @@ func Run() {
 	LoadConfig()
 	fmt.Println("@@@ Loader configuration")
 	
+	// connect to rabbit mq
+	InitRabbitMQ()
+	fmt.Println("RabbitMQ initialized")
+	logger.ChannelRabbitMq = global.RabbitMQProducer_LOGGERDISCORD
+
 	// initialize logger
 	InitLogger()
 	global.Logger.Info("Logger initialized")
