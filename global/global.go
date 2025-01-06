@@ -8,6 +8,8 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/segmentio/kafka-go"
 	"gorm.io/gorm"
+	amqp "github.com/rabbitmq/amqp091-go"
+
 )
 
 var (
@@ -17,4 +19,5 @@ var (
 	Rdb           *redis.Client
 	Mdbc          *sql.DB
 	KafkaProducer *kafka.Writer
+	RabbitMQProducer_LOGGERDISCORD *amqp.Channel
 )

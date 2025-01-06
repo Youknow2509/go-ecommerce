@@ -53,3 +53,5 @@ smtp:
 send_grid:
   api_key: "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"
 
+rabbitmq:
+  url_rb_d: ""

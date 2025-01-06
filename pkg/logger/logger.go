@@ -4,13 +4,32 @@ import (
 	"os"
 
 	"github.com/Youknow2509/go-ecommerce/pkg/setting"
+	"github.com/Youknow2509/go-ecommerce/pkg/utils/rabbitmq"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
+    amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type LoggerZap struct {
 	*zap.Logger
+}
+
+var (
+    ChannelRabbitMq *amqp.Channel
+)
+
+type RabbitMQLogger struct {
+    producer rabbitmq.Write
+}
+
+// handle io.Writer in RabbitMQLogger
+func (r *RabbitMQLogger) Write(p []byte) (n int, err error) {
+    err = r.producer.WriteToTopic("logger_discord", "logger.info", p)
+    if err != nil {
+        return 0, err
+    }
+    return len(p), nil
 }
 
 func NewLogger(configLogger setting.LoggerSetting) *LoggerZap {
@@ -45,9 +64,18 @@ func NewLogger(configLogger setting.LoggerSetting) *LoggerZap {
 		MaxAge:     configLogger.MaxAge,     // Max number of days to retain old files
 		Compress:   configLogger.Compress,   // Whether to compress old files
 	}
+
+    hook_rb := &RabbitMQLogger{
+        producer: rabbitmq.NewRabbitMQWriter(ChannelRabbitMq),
+    }
+
 	core := zapcore.NewCore(
 		encoder,
-		zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout), zapcore.AddSync(&hook)),
+		zapcore.NewMultiWriteSyncer(
+			zapcore.AddSync(os.Stdout),
+			zapcore.AddSync(&hook),
+            zapcore.AddSync(hook_rb),
+		),
 		level)
 
 	// logger := zap.New(core, zap.AddCaller())

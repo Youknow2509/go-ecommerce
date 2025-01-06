@@ -7,8 +7,13 @@ type Config struct {
 	Logger   LoggerSetting   `mapstructure:"logger"`
 	Redis    RedisSetting    `mapstructure:"redis"`
 	SendGrid SendGridSetting `mapstructure:"send_grid"`
+	RabbitMQ RabbitMQSetting `mapstructure:"rabbitmq"`
 }
 
+// rabbit mq struct settings
+type RabbitMQSetting struct {
+	Url_RB_D     string `mapstructure:"url_rb_d"`
+}
 // SendGrid Struct Settings
 type SendGridSetting struct {
 	APIKey string `mapstructure:"api_key"`
