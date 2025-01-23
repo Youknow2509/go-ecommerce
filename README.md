@@ -31,6 +31,6 @@
 
 - Handle change data capture (CDC) with [debezium](https://debezium.io/)
 
-- Handle send main:
+- Handle send mail:
     + [sendgrid](https://sendgrid.com)
     + [smtp](https://pkg.go.dev/net/smtp)

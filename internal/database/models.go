@@ -4,6 +4,10 @@
 
 package database
 
+import (
+	"database/sql"
+)
+
 // Account
 type GoCrmUser struct {
 	// Account ID
@@ -30,4 +34,46 @@ type GoCrmUser struct {
 	UsrLoginTimes int32
 	// Status
 	UsrStatus bool
+}
+
+type PreGoAccUserBase9999 struct {
+	// User ID
+	UserID int32
+	// User account
+	UserAccount string
+	// User password
+	UserPassword string
+	// Salt for hashing
+	UserSalt string
+	// Last login timestamp
+	UserLoginTime sql.NullTime
+	// Last logout timestamp
+	UserLogoutTime sql.NullTime
+	// IP address of last login
+	UserLoginIp sql.NullString
+	// Creation timestamp
+	UserCreatedAt sql.NullTime
+	// Update timestamp
+	UserUpdatedAt sql.NullTime
+}
+
+type PreGoAccUserVerify9999 struct {
+	// Verification ID
+	VerifyID int32
+	// One-time password
+	VerifyOtp string
+	// Verification key
+	VerifyKey string
+	// Hash of the verification key
+	VerifyKeyHash string
+	// Verification type (e.g., 1 for email)
+	VerifyType sql.NullInt32
+	// Verification status: 1 for verified, 0 for not verified
+	IsVerified sql.NullInt32
+	// Deletion flag: 1 for deleted, 0 for not deleted
+	IsDeleted sql.NullInt32
+	// Record creation time
+	VerifyCreatedAt sql.NullTime
+	// Record update time
+	VerifyUpdatedAt sql.NullTime
 }

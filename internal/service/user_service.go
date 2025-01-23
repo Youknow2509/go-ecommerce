@@ -1,12 +1,16 @@
 package service
 
-import "context"
+import (
+	"context"
+
+	"github.com/Youknow2509/go-ecommerce/internal/model"
+)
 
 // create interface
 type (
 	IUserLogin interface {
 		Login(ctx context.Context) error
-		Register(ctx context.Context) error
+		Register(ctx context.Context, in *model.RegisterInput) (codeResult int, err error)
 		VerifyOTP(ctx context.Context) error
 		
 	}
