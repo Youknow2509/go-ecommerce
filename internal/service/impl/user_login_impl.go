@@ -73,11 +73,11 @@ func (s *sUserLogin) Register(ctx context.Context, in *model.RegisterInput) (cod
 	case errors.Is(err, redis.Nil):
 		fmt.Println("key does not exist")
 
-	case err != nil:
-		fmt.Println("get failed:: ", err)
-		return response.ErrInvalidOTP, err
-	case otpFound != "":
-		return response.ErrCodeOTPNotExist, errors.New("OTP exists but not registered")
+	// case err != nil:
+	// 	fmt.Println("get failed:: ", err)
+	// 	return response.ErrInvalidOTP, err
+	// case otpFound != "":
+	// 	return response.ErrCodeOTPNotExist, errors.New("OTP exists but not registered")
 	}
 
 	// 4. generate otp
@@ -135,6 +135,35 @@ func (s *sUserLogin) Register(ctx context.Context, in *model.RegisterInput) (cod
 }
 
 // VerifyOTP implements service.IUserLogin.
-func (s *sUserLogin) VerifyOTP(ctx context.Context) error {
-	return nil
+func (s *sUserLogin) VerifyOTP(ctx context.Context, in *model.VerifyInput) (out model.VerifyOTPOutput, err error) {
+	// get hash key
+	hashKey := crypto.GetHash(strings.ToLower(in.VerifyKey))
+
+	// get otp
+	otpFound, err := global.Rdb.Get(ctx, utils.GetUserKey(hashKey)).Result()
+	if err != nil {
+		return out, err
+	}
+
+	if in.VerifyCode != otpFound {
+		// TODO - neu sai 3 lan trong 1 phut
+		return out, errors.New("OTP not match")
+	}
+
+	infoOTP, err := s.r.GetInfoOTP(ctx, hashKey)
+	if err != nil {
+		return out, err
+	}
+	
+	// upgrade status verify
+	err = s.r.UpdateUserVerificationStatus(ctx, hashKey)
+	if err != nil {
+		return out, err
+	}
+
+	// output 
+	out.Token = infoOTP.VerifyKeyHash
+	out.Message = "success"
+
+	return out, err
 }

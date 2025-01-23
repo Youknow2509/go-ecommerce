@@ -33,6 +33,7 @@ func (ur *UserRouter) InitUserRouter(Router *gin.RouterGroup) {
 		// userRouterPublic.POST("/register", userController.Register)
 		userRouterPublic.POST("/register", account.Login.Register)
 		userRouterPublic.POST("/login", account.Login.Login)
+		userRouterPublic.POST("/verify_account", account.Login.VerifyOTP)	
 		// userRouterPublic.POST("/send_otp")
 	}
 

@@ -11,7 +11,7 @@ type (
 	IUserLogin interface {
 		Login(ctx context.Context) error
 		Register(ctx context.Context, in *model.RegisterInput) (codeResult int, err error)
-		VerifyOTP(ctx context.Context) error
+		VerifyOTP(ctx context.Context, in *model.VerifyInput) (out model.VerifyOTPOutput, err error)
 		
 	}
 
