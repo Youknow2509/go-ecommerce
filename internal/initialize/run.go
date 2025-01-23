@@ -2,14 +2,14 @@ package initialize
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/Youknow2509/go-ecommerce/global"
 	"github.com/Youknow2509/go-ecommerce/pkg/logger"
+	"github.com/gin-gonic/gin"
 )
 
 // Run all initialization
-func Run() {
+func Run() *gin.Engine {
 	// load configuration
 	LoadConfig()
 	fmt.Println("@@@ Loader configuration")
@@ -47,6 +47,8 @@ func Run() {
 	r := InitRouter()
 
 	// run server
-	port := strconv.Itoa(global.Config.Server.Port)
-	r.Run(":" + port)
+	// port := strconv.Itoa(global.Config.Server.Port)
+	// r.Run(":" + port)
+
+	return r
 }

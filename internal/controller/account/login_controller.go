@@ -26,6 +26,16 @@ func (cU *cUserLogin) Login(c *gin.Context) {
 	response.SuccessResponse(c, response.ErrCodeSuccess, nil)
 }
 
+// Register godoc
+// @Summary      Register a new account
+// @Description  When user register, system will send OTP to user's phone number or email address
+// @Tags         accounts management
+// @Accept       json
+// @Produce      json
+// @Param        payload body model.RegisterInput true "payload"
+// @Success      200  {object}  response.ResponseData
+// @Failure      500  {object}  response.ErrResponseData
+// @Router       /v1/user/register [post]
 func (cU *cUserLogin) Register(c *gin.Context) {
 	var params model.RegisterInput
 	if err := c.ShouldBindJSON(&params); err!= nil {

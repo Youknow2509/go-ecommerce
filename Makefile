@@ -27,6 +27,7 @@ GOOSE_PATH_QUERIES = sql/queries
 .PHONY: docker_build docker_run docker_stop docker_stop_v
 .PHONY: exec_mysql mysql_dump exec_redis exec_kafka_ui
 .PHONY: goose_create goose_up goose_down goose_status goose_fix goose_redo goose_reset goose_clean
+.PHONY: swag
 
 # Help Command
 help:
@@ -63,6 +64,8 @@ help:
 	@echo "\t ${YELLOW_COLOR_BG}goose_clean${RESET_COLOR} \t Remove all migrations"
 	@echo "\nSQLC Commands:"
 	@echo "\t ${YELLOW_COLOR_BG}sqlc_generate${RESET_COLOR} \t Generate SQLC queries"
+	@echo "\nSwagger Commands:"
+	@echo "\t ${YELLOW_COLOR_BG}swag${RESET_COLOR} \t Handle swagger"
 
 # SQLC - Generate
 sqlc_generate:
@@ -227,3 +230,6 @@ install_path_pkg:
 	export PATH=$PATH:$(go env GOPATH)/bin
 	@echo "${GREEN_COLOR_BG}Go binary directory added to PATH${RESET_COLOR}"
 
+# handle swagger
+swag:
+	swag init -g ./cmd/server/main.go -o ./cmd/swag/docs
