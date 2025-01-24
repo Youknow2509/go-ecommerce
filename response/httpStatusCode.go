@@ -10,6 +10,10 @@ const (
 
 	// Register Code
 	ErrCodeUserHasExist = 50001 // User has exist
+	ErrCodeBindRegisterInput = 50002
+	ErrCodeBindVerifyInput = 50003
+	ErrCodeVerifyOTPFail = 50004
+	ErrCodeBindUpdatePasswordInput = 50005
 
 	// Login Code
 	ErrCodeOTPNotExist = 60001
@@ -42,6 +46,10 @@ var msg = map[int]string{
 	ErrSendEmailOTP: "send email otp failed",
 
 	ErrCodeUserHasExist: "user has exist",
+	ErrCodeBindRegisterInput: "bind register input failed",
+	ErrCodeBindVerifyInput: "bind verify input failed",
+	ErrCodeVerifyOTPFail: "verify otp failed",
+	ErrCodeBindUpdatePasswordInput: "bind update password input failed",
 
 	ErrCodeOTPNotExist: "otp exists but not registered",
 	ErrCodeUserOTPNotExist: "user otp does not exist",
