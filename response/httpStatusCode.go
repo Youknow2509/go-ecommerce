@@ -13,6 +13,23 @@ const (
 
 	// Login Code
 	ErrCodeOTPNotExist = 60001
+
+	ErrCodeUserOTPNotExist = 60002
+	ErrCodeOTPDontVerify = 60003
+
+	ErrCodeUpdatePasswordRegister = 100000
+	// crypto code
+	ErrCodeCryptoHash = 70001
+	ErrCodeGeneratorSalt = 70002
+
+	// database code
+	ErrCodeAddUserBase = 80001
+    ErrCodeQueryUserBase = 80002
+    ErrCodeUpdateUserBase = 80003
+    ErrCodeDeleteUserBase = 80004
+    ErrCodeUserBaseNotFound = 80005
+	
+	ErrCodeAddUserInfo = 90001
 )
 
 // message
@@ -27,4 +44,19 @@ var msg = map[int]string{
 	ErrCodeUserHasExist: "user has exist",
 
 	ErrCodeOTPNotExist: "otp exists but not registered",
+	ErrCodeUserOTPNotExist: "user otp does not exist",
+	ErrCodeOTPDontVerify: "otp does not verify",
+
+	ErrCodeCryptoHash: "crypto hash failed",
+	ErrCodeGeneratorSalt: "generator salt failed",
+
+	ErrCodeAddUserBase: "add user base failed",
+	ErrCodeQueryUserBase: "query user base failed",
+	ErrCodeUpdateUserBase: "update user base failed",
+	ErrCodeDeleteUserBase: "delete user base failed",
+	ErrCodeUserBaseNotFound: "user base not found",
+	
+	ErrCodeAddUserInfo: "add user info failed",
+
+	ErrCodeUpdatePasswordRegister: "update password register failed",
 }

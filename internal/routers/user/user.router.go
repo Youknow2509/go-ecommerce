@@ -34,6 +34,8 @@ func (ur *UserRouter) InitUserRouter(Router *gin.RouterGroup) {
 		userRouterPublic.POST("/register", account.Login.Register)
 		userRouterPublic.POST("/login", account.Login.Login)
 		userRouterPublic.POST("/verify_account", account.Login.VerifyOTP)	
+		userRouterPublic.POST("/upgrade_password_register", account.Login.UpgradePasswordRegister)	
+		
 		// userRouterPublic.POST("/send_otp")
 	}
 

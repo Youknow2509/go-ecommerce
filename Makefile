@@ -26,7 +26,7 @@ GOOSE_PATH_QUERIES = sql/queries
 .PHONY: install_path_pkg run_server wire regenerate_wire clear_log cre_env deps build test coverage
 .PHONY: docker_build docker_run docker_stop docker_stop_v
 .PHONY: exec_mysql mysql_dump exec_redis exec_kafka_ui
-.PHONY: goose_create goose_up goose_down goose_status goose_fix goose_redo goose_reset goose_clean
+.PHONY: goose_create goose_up goose_down goose_status goose_fix goose_redo goose_reset goose_clean goose_up_by_one
 .PHONY: swag
 
 # Help Command
@@ -56,6 +56,7 @@ help:
 	@echo "\nGoose Migration Commands:"
 	@echo "\t ${YELLOW_COLOR_BG}goose_create${RESET_COLOR} \t Create a new migration"
 	@echo "\t ${YELLOW_COLOR_BG}goose_up${RESET_COLOR} \t Run all available migrations"
+	@echo "\t ${YELLOW_COLOR_BG}goose_up_by_one${RESET_COLOR} \t Run all available migrations by one"
 	@echo "\t ${YELLOW_COLOR_BG}goose_down${RESET_COLOR} \t Rollback the most recent migration"
 	@echo "\t ${YELLOW_COLOR_BG}goose_status${RESET_COLOR} \t Show the status of all migrations"
 	@echo "\t ${YELLOW_COLOR_BG}goose_fix${RESET_COLOR} \t Fix the last migration"
@@ -76,8 +77,14 @@ sqlc_generate:
 # Goosee - Create a new migration
 goose_create:
 	@echo "${YELLOW_COLOR_BG}Creating a new migration${RESET_COLOR}"
-	${GOOSE} -dir ${GOOSE_PATH_SCHEMA} create $(NAME) sql
+	${GOOSE} -dir ${GOOSE_PATH_SCHEMA} create $(NAME)sql
 	@echo "${GREEN_COLOR_BG}Migration created${RESET_COLOR}"
+
+# Goose - Migrate the DB up by 1 
+goose_up_by_one:
+	@echo "${YELLOW_COLOR_BG}Migrate the DB up by 1${RESET_COLOR}"
+	goose -dir ${GOOSE_PATH_SCHEMA} ${GOOSE_DRIVER} $(GOOSE_DB_DSN) up-by-one
+	@echo "${GREEN_COLOR_BG}Migrations completed${RESET_COLOR}"
 
 # Goose - Run all available migrations
 goose_up:

@@ -14,7 +14,7 @@ const addUserBase = `-- name: AddUserBase :execresult
 INSERT INTO ` + "`" + `pre_go_acc_user_base_9999` + "`" + ` (
     user_account, user_password, user_salt, user_created_at, user_updated_at
 ) VALUES (
-    ?, ?, ?, NOW, NOW()
+    ?, ?, ?, NOW(), NOW()
 )
 `
 
