@@ -9,7 +9,7 @@ import (
 // create interface
 type (
 	IUserLogin interface {
-		Login(ctx context.Context) error
+		Login(ctx context.Context, in *model.LoginInput) (codeResult int, out model.LoginOutput, err error)
 		Register(ctx context.Context, in *model.RegisterInput) (codeResult int, err error)
 		VerifyOTP(ctx context.Context, in *model.VerifyInput) (out model.VerifyOTPOutput, err error)
 		UpdatePasswordRegister(ctx context.Context, in *model.UpdatePasswordInput) (userId int, err error)

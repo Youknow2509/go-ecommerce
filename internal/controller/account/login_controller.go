@@ -15,15 +15,32 @@ type cUserLogin struct {
 
 }
 
+// Login godoc
+// @Summary      Login user
+// @Description  Login user by account and password
+// @Tags         accounts management
+// @Accept       json
+// @Produce      json
+// @Param        payload body model.LoginInput true "payload"
+// @Success      200  {object}  response.ResponseData
+// @Failure      500  {object}  response.ErrResponseData
+// @Router       /v1/user/login [post]
 func (cU *cUserLogin) Login(c *gin.Context) {
 
-	err := service.UserLogin().Login(c)
-	if err != nil {
-        response.ErrorResponse(c, response.ErrCodeParamInvalid, err.Error())
-        return
-    }
+	var params model.LoginInput
+	if err := c.ShouldBindJSON(&params); err!= nil {
+		response.ErrorResponse(c, response.ErrCodeBindLoginInput, err.Error())
+		return
+	} 
 
-	response.SuccessResponse(c, response.ErrCodeSuccess, nil)
+	codeStatus, out, err := service.UserLogin().Login(c, &params)
+	if err != nil {
+		global.Logger.Error("Error login user", zap.Error(err))
+		response.ErrorResponse(c, codeStatus, err.Error())
+		return
+	}
+
+	response.SuccessResponse(c, response.ErrCodeSuccess, out)
 }
 
 // Register godoc

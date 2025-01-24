@@ -8,12 +8,14 @@ type Config struct {
 	Redis    RedisSetting    `mapstructure:"redis"`
 	SendGrid SendGridSetting `mapstructure:"send_grid"`
 	RabbitMQ RabbitMQSetting `mapstructure:"rabbitmq"`
+	Jwt      JwtSetting      `mapstructure:"jwt"`
 }
 
 // rabbit mq struct settings
 type RabbitMQSetting struct {
-	Url_RB_D     string `mapstructure:"url_rb_d"`
+	Url_RB_D string `mapstructure:"url_rb_d"`
 }
+
 // SendGrid Struct Settings
 type SendGridSetting struct {
 	APIKey string `mapstructure:"api_key"`
@@ -56,3 +58,9 @@ type LoggerSetting struct {
 	Compress   bool   `mapstructure:"compress"`
 }
 
+// Jwt struct
+type JwtSetting struct {
+	TOKEN_HOUR_LIFESPAN uint   `mapstructure:"token_hour_lifespan"`
+	JWT_EXPIRATION      string `mapstructure:"jwt_expiration"`
+	API_SECRET          string `mapstructure:"api_secret"`
+}
