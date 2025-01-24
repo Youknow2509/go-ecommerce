@@ -55,3 +55,8 @@ send_grid:
 
 rabbitmq:
   url_rb_d: ""
+
+jwt:
+  token_hour_lifespan: 1
+  jwt_expiration: 1h
+  api_secret: "xxx.yyy.zzz"

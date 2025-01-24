@@ -32,3 +32,9 @@ func HashPasswordWithSalt(password, salt string) (string) {
 	hassPassword := sha256.Sum256([]byte(saltedPassword))
 	return hex.EncodeToString(hassPassword[:])
 }
+
+// compare password with hashed password
+func ComparePasswordWithHash(password, salt, hashedPasswordStore string) bool {
+	hassPassword := HashPasswordWithSalt(password, salt)
+	return hassPassword == hashedPasswordStore
+}
