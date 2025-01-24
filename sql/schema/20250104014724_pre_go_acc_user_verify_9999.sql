@@ -3,7 +3,7 @@
 CREATE TABLE `pre_go_acc_user_verify_9999` (
     `verify_id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'Verification ID',
     `verify_otp` VARCHAR(6) NOT NULL COMMENT 'One-time password',
-    `verify_key` VARCHAR(255) NOT NULL COMMENT 'Verification key',
+    `verify_key` VARCHAR(255) NOT NULL COMMENT 'Verification key - email address, phone number, ....',
     `verify_key_hash` VARCHAR(255) NOT NULL COMMENT 'Hash of the verification key',
     `verify_type` INT NULL DEFAULT 1 COMMENT 'Verification type (e.g., 1 for email)',
     `is_verified` INT NULL COMMENT 'Verification status: 1 for verified, 0 for not verified',
