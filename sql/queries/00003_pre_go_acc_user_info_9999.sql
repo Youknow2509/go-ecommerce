@@ -42,7 +42,7 @@ SELECT * FROM pre_go_acc_user_info_9999 LIMIT ? OFFSET ?;
 -- name: RemoveUser :exec
 DELETE FROM pre_go_acc_user_info_9999 WHERE user_id = ?;
 
--- -- name: UpdatePassword :exec
+-- name: UpdatePassword :exec
 UPDATE `pre_go_acc_user_info_9999` 
 SET user_password = ? WHERE user_id = ?;
 
