@@ -79,3 +79,30 @@ func (cU *cUserLogin) VerifyOTP(c *gin.Context) {
 
 	response.SuccessResponse(c, response.ErrCodeSuccess, out)
 }
+
+// Update password when register
+// @Summary      update password when register
+// @Description  after verification otp can be updated password
+// @Tags         accounts management
+// @Accept       json
+// @Produce      json
+// @Param        payload body model.UpdatePasswordInput true "payload"
+// @Success      200  {object}  response.ResponseData
+// @Failure      500  {object}  response.ErrResponseData
+// @Router       /v1/user/upgrade_password_register [post]
+func (cU *cUserLogin) UpgradePasswordRegister(c *gin.Context) {
+	var params model.UpdatePasswordInput
+	if err := c.ShouldBindJSON(&params); err!= nil {
+		response.ErrorResponse(c, response.ErrCodeParamInvalid, err.Error())
+		return
+	}
+
+	out, err := service.UserLogin().UpdatePasswordRegister(c, &params)
+	if err != nil {
+		global.Logger.Error("Error updating password register", zap.Error(err))
+		response.ErrorResponse(c, response.ErrCodeUpdatePasswordRegister, err.Error())
+		return
+	}
+
+	response.SuccessResponse(c, response.ErrCodeSuccess, out)
+} 

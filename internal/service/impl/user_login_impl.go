@@ -66,18 +66,17 @@ func (s *sUserLogin) Register(ctx context.Context, in *model.RegisterInput) (cod
 
 	fmt.Println("userKey::", userKey)
 	fmt.Println("otpFound::", otpFound)
-	fmt.Println("Err:: ",err)
+	fmt.Println("Err:: ", err)
 
 	// utils...
 	switch {
 	case errors.Is(err, redis.Nil):
 		fmt.Println("key does not exist")
-
-	// case err != nil:
-	// 	fmt.Println("get failed:: ", err)
-	// 	return response.ErrInvalidOTP, err
-	// case otpFound != "":
-	// 	return response.ErrCodeOTPNotExist, errors.New("OTP exists but not registered")
+	case err != nil:
+		fmt.Println("get failed:: ", err)
+		return response.ErrInvalidOTP, err
+	case otpFound != "":
+		return response.ErrCodeOTPNotExist, errors.New("OTP exists but not registered")
 	}
 
 	// 4. generate otp
@@ -117,7 +116,7 @@ func (s *sUserLogin) Register(ctx context.Context, in *model.RegisterInput) (cod
 		)
 		if err != nil {
 			return response.ErrInvalidOTP, err
-        }
+		}
 
 		// 8. get last id
 		lastIdVerifyUser, err := result.LastInsertId()
@@ -141,8 +140,12 @@ func (s *sUserLogin) VerifyOTP(ctx context.Context, in *model.VerifyInput) (out 
 
 	// get otp
 	otpFound, err := global.Rdb.Get(ctx, utils.GetUserKey(hashKey)).Result()
-	if err != nil {
-		return out, err
+	switch {
+		case errors.Is(err, redis.Nil):
+			fmt.Println("key does not exist")
+		case err != nil:
+			fmt.Println("get failed:: ", err)
+			return out, err
 	}
 
 	if in.VerifyCode != otpFound {
@@ -154,16 +157,77 @@ func (s *sUserLogin) VerifyOTP(ctx context.Context, in *model.VerifyInput) (out 
 	if err != nil {
 		return out, err
 	}
-	
+
 	// upgrade status verify
 	err = s.r.UpdateUserVerificationStatus(ctx, hashKey)
 	if err != nil {
 		return out, err
 	}
 
-	// output 
+	// output
 	out.Token = infoOTP.VerifyKeyHash
 	out.Message = "success"
 
 	return out, err
+}
+
+// UpdatePasswordRegister implements service.IUserLogin.
+func (s *sUserLogin) UpdatePasswordRegister(ctx context.Context, in *model.UpdatePasswordInput) (userId int, err error) {
+	// token is already
+	infoOTP, err := s.r.GetInfoOTP(ctx, in.Token)
+	if err != nil {
+		return response.ErrCodeUserOTPNotExist, err
+	}
+	// check otp verify
+	if infoOTP.IsVerified.Int32 == 0 {
+		return response.ErrCodeOTPDontVerify, errors.New("OTP not verify")
+	}
+	// check token exists in user_base
+	// update userbase password
+	salt, err := crypto.GenerateSalt(16)
+	if err != nil {
+		return response.ErrCodeGeneratorSalt, err
+	}
+	passworkHash := crypto.HashPasswordWithSalt(in.Password, salt)
+
+	userBase := database.AddUserBaseParams{
+		UserAccount:  infoOTP.VerifyKey,
+		UserPassword: passworkHash,
+		UserSalt:     salt,
+	}
+	// add userBase to user_base table
+	newUserBase, err := s.r.AddUserBase(ctx, userBase)
+	if err != nil {
+		return response.ErrCodeAddUserBase, err
+	}
+
+
+	user_id, err := newUserBase.LastInsertId()
+	if err != nil {
+		return response.ErrCodeAddUserBase, err
+	}
+
+	// add user_id to user_info table
+
+	newUserInfo, err := s.r.AddUserHaveUserId(ctx, database.AddUserHaveUserIdParams{
+		UserID:               uint64(user_id),
+		UserAccount:          infoOTP.VerifyKey,
+		UserNickname:         sql.NullString{String: infoOTP.VerifyKey, Valid: true},
+		UserAvatar:           sql.NullString{String: "", Valid: true},
+		UserState:            1,
+		UserMobile:           sql.NullString{String: "", Valid: true},
+		UserGender:           sql.NullInt16{Int16: 0, Valid: true},
+		UserBirthday:         sql.NullTime{Time: time.Time{}, Valid: false},
+		UserEmail:            sql.NullString{String: infoOTP.VerifyKey, Valid: true},
+		UserIsAuthentication: 0,
+	})
+	if err != nil {
+		return response.ErrCodeAddUserInfo, err
+	}
+
+	user_id, err = newUserInfo.LastInsertId()
+	if err != nil {
+		return response.ErrCodeAddUserBase, err
+	}
+	return int(user_id), nil
 }
