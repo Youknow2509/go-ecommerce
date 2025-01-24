@@ -39,7 +39,7 @@ func (cU *cUserLogin) Login(c *gin.Context) {
 func (cU *cUserLogin) Register(c *gin.Context) {
 	var params model.RegisterInput
 	if err := c.ShouldBindJSON(&params); err!= nil {
-        response.ErrorResponse(c, response.ErrCodeParamInvalid, err.Error())
+        response.ErrorResponse(c, response.ErrCodeBindRegisterInput, err.Error())
         return
     }
 
@@ -66,14 +66,14 @@ func (cU *cUserLogin) Register(c *gin.Context) {
 func (cU *cUserLogin) VerifyOTP(c *gin.Context) {
 	var params model.VerifyInput
 	if err := c.ShouldBindJSON(&params); err!= nil {
-		response.ErrorResponse(c, response.ErrCodeParamInvalid, err.Error())
+		response.ErrorResponse(c, response.ErrCodeBindVerifyInput, err.Error())
 		return
 	}
 
 	out, err := service.UserLogin().VerifyOTP(c, &params)
 	if err != nil {
 		global.Logger.Error("Error verifying user otp", zap.Error(err))
-		response.ErrorResponse(c, response.ErrCodeParamInvalid, err.Error())
+		response.ErrorResponse(c, response.ErrCodeVerifyOTPFail, err.Error())
 		return
 	}
 
@@ -93,7 +93,7 @@ func (cU *cUserLogin) VerifyOTP(c *gin.Context) {
 func (cU *cUserLogin) UpgradePasswordRegister(c *gin.Context) {
 	var params model.UpdatePasswordInput
 	if err := c.ShouldBindJSON(&params); err!= nil {
-		response.ErrorResponse(c, response.ErrCodeParamInvalid, err.Error())
+		response.ErrorResponse(c, response.ErrCodeBindUpdatePasswordInput, err.Error())
 		return
 	}
 
