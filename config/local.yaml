@@ -1,0 +1,57 @@
+server:
+  port: 8082
+  mode: "dev" # default: dev, options: dev, prod
+
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  username: root
+  password: root123
+  dbname: go_ecommerce
+  maxIdleConns: 10
+  maxOpenConns: 100
+  connMaxLifetime: 3600
+
+logger:
+  level: debug
+  file_log_name: "./storages/log/dev.001.log"
+  max_size: 500
+  max_backups: 3
+  max_age: 30
+  compress: true
+
+redis:
+  host: 127.0.0.1
+  port: 6379
+  password: 
+  db: 0
+  pool_size: 10
+
+zookeeper:
+  host: 127.0.0.1
+  port: 2181
+  #  TODO complete the configuration
+
+kafak:
+  host: 127.0.0.1
+  port_internal: 9092
+  port_external: 9094
+  # brokers:
+  #   - 
+  #  TODO complete the configuration
+
+kafka_ui:
+  host: 127.0.0.1
+  port: 8083
+
+smtp:
+  host: smtp.gmail.com
+  port: 587
+  username: 
+  password: 
+
+send_grid:
+  api_key: ""
+
+rabbitmq:
+  url_rb_d: ""
