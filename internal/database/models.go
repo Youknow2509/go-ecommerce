@@ -6,7 +6,52 @@ package database
 
 import (
 	"database/sql"
+	"database/sql/driver"
+	"fmt"
 )
+
+type PreGoAccUserTwoFactor9999TwoFactorAuthType string
+
+const (
+	PreGoAccUserTwoFactor9999TwoFactorAuthTypeEMAIL PreGoAccUserTwoFactor9999TwoFactorAuthType = "EMAIL"
+	PreGoAccUserTwoFactor9999TwoFactorAuthTypeSMS   PreGoAccUserTwoFactor9999TwoFactorAuthType = "SMS"
+	PreGoAccUserTwoFactor9999TwoFactorAuthTypeAPP   PreGoAccUserTwoFactor9999TwoFactorAuthType = "APP"
+)
+
+func (e *PreGoAccUserTwoFactor9999TwoFactorAuthType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = PreGoAccUserTwoFactor9999TwoFactorAuthType(s)
+	case string:
+		*e = PreGoAccUserTwoFactor9999TwoFactorAuthType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for PreGoAccUserTwoFactor9999TwoFactorAuthType: %T", src)
+	}
+	return nil
+}
+
+type NullPreGoAccUserTwoFactor9999TwoFactorAuthType struct {
+	PreGoAccUserTwoFactor9999TwoFactorAuthType PreGoAccUserTwoFactor9999TwoFactorAuthType
+	Valid                                      bool // Valid is true if PreGoAccUserTwoFactor9999TwoFactorAuthType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullPreGoAccUserTwoFactor9999TwoFactorAuthType) Scan(value interface{}) error {
+	if value == nil {
+		ns.PreGoAccUserTwoFactor9999TwoFactorAuthType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.PreGoAccUserTwoFactor9999TwoFactorAuthType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullPreGoAccUserTwoFactor9999TwoFactorAuthType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.PreGoAccUserTwoFactor9999TwoFactorAuthType), nil
+}
 
 // Account
 type GoCrmUser struct {
@@ -84,12 +129,34 @@ type PreGoAccUserInfo9999 struct {
 	UpdatedAt sql.NullTime
 }
 
+// pre_go_acc_user_two_factor_9999
+type PreGoAccUserTwoFactor9999 struct {
+	// Khoa chinh tu dong tang
+	TwoFactorID uint32
+	// Khoa ngoai lien ket voi bang nguoi dung
+	UserID uint32
+	// Loai xac thuc 2fa
+	TwoFactorAuthType PreGoAccUserTwoFactor9999TwoFactorAuthType
+	// Ma bi mat xac thuc 2fa
+	TwoFactorAuthSecret string
+	// So dien thoai xac thuc 2fa
+	TwoFactorPhone string
+	// Email xac thuc 2fa
+	TwoFactorEmail string
+	// Trang thai kich hoat xac thuc 2fa
+	TwoFactorIsActive bool
+	// Thoi gian tao xac thuc 2fa
+	TwoFactorCreatedAt sql.NullTime
+	// Thoi gian cap nhat xac thuc 2fa
+	TwoFactorUpdatedAt sql.NullTime
+}
+
 type PreGoAccUserVerify9999 struct {
 	// Verification ID
 	VerifyID int32
 	// One-time password
 	VerifyOtp string
-	// Verification key
+	// Verification key - email address, phone number, ....
 	VerifyKey string
 	// Hash of the verification key
 	VerifyKeyHash string

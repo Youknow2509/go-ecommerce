@@ -38,8 +38,49 @@ func NewSUserLogin(r *database.Queries) service.IUserLogin {
 	}
 }
 
+// two-factor authentication
+func (s *sUserLogin) IsTwoFactorEnabled(ctx context.Context, userId int) (codeResult int, err error) {
+	// TODO
+	return response.ErrCodeSuccess, nil
+}
+
+// setup authentication
+func (s *sUserLogin) SetupTwoFactorAuth(ctx context.Context, in *model.SetupTwoFactorAuthInput) (codeResult int, err error) {
+	// check if user is already
+	isTwoFactorAuth, err := s.r.IsTwoFactorEnabled(ctx, in.UserId)
+	if err != nil {
+		return response.ErrCodeTwoFactorAuthSetupFailed, err
+	}
+	if isTwoFactorAuth > 0 {
+		return response.ErrCodeTwoFactorAuthSetupFailed, errors.New("two factor authentication is already")
+	}
+	// create new type auth
+	err = s.r.EnableTwoFactorTypeEmail(ctx, database.EnableTwoFactorTypeEmailParams{
+		UserID:            in.UserId,
+		TwoFactorAuthType: database.PreGoAccUserTwoFactor9999TwoFactorAuthTypeEMAIL,
+		TwoFactorEmail:    in.TwoFactorEmail,
+	})
+	if err != nil {
+		return response.ErrCodeTwoFactorAuthSetupFailed, err
+	}
+	// send otp to email
+	keyUserTwoFactor := crypto.GetHash("2fa" + strconv.Itoa(int(in.UserId)))
+	otp := random.GenerateSixDigitOtp()
+	go global.Rdb.Set(ctx, keyUserTwoFactor, otp, time.Duration(consts.TIME_OTP_REGISTER)*time.Minute).Err()
+	
+	
+	// TODO
+	return response.ErrCodeSuccess, nil
+}
+
+// verify authentication
+func (s *sUserLogin) VerifyTwoFactorAuth(ctx context.Context, in *model.TwoFactorVerificationInput) (codeResult int, err error) {
+	// TODO
+	return response.ErrCodeSuccess, nil
+}
+
 // Login implements service.IUserLogin.
-func (s *sUserLogin) Login(ctx context.Context, in *model.LoginInput) (codeResult int, out model.LoginOutput, err error){
+func (s *sUserLogin) Login(ctx context.Context, in *model.LoginInput) (codeResult int, out model.LoginOutput, err error) {
 	// check user in table user_base
 	userBase, err := s.r.GetOneUserInfo(ctx, in.UserAccount)
 	if err != nil {
@@ -54,22 +95,22 @@ func (s *sUserLogin) Login(ctx context.Context, in *model.LoginInput) (codeResul
 	// upgrade state login
 	go s.r.LoginUserBase(ctx, database.LoginUserBaseParams{
 		UserLoginIp:  sql.NullString{String: "127.0.0.1", Valid: true},
-        UserAccount:  in.UserAccount,
-        UserPassword: userBase.UserPassword,
+		UserAccount:  in.UserAccount,
+		UserPassword: userBase.UserPassword,
 	})
 	// create uuid
 	subToken := utils.GenerateCliTokenUUID(int(userBase.UserID))
-	log.Println("subToken: ", subToken) 
+	log.Println("subToken: ", subToken)
 	// get user info table
 	infoUser, err := s.r.GetUser(ctx, uint64(userBase.UserID))
 	if err != nil {
 		return response.ErrCodeAuthFailed, out, err
 	}
-	// convert to json 
+	// convert to json
 	infoUserJson, err := json.Marshal(infoUser)
 	if err != nil {
 		return response.ErrCodeAuthFailed, out, fmt.Errorf("convert json failed: %w", err)
-	}	
+	}
 	// give infoUserJson to redis with key = subToken
 	err = global.Rdb.Set(ctx, subToken, infoUserJson, time.Duration(consts.TIME_OTP_REGISTER)*time.Minute).Err()
 	if err != nil {
@@ -83,7 +124,6 @@ func (s *sUserLogin) Login(ctx context.Context, in *model.LoginInput) (codeResul
 
 	return response.ErrCodeSuccess, out, nil
 }
-
 
 // Register implements service.IUserLogin.
 func (s *sUserLogin) Register(ctx context.Context, in *model.RegisterInput) (codeResult int, err error) {
@@ -186,11 +226,11 @@ func (s *sUserLogin) VerifyOTP(ctx context.Context, in *model.VerifyInput) (out 
 	// get otp
 	otpFound, err := global.Rdb.Get(ctx, utils.GetUserKey(hashKey)).Result()
 	switch {
-		case errors.Is(err, redis.Nil):
-			fmt.Println("key does not exist")
-		case err != nil:
-			fmt.Println("get failed:: ", err)
-			return out, err
+	case errors.Is(err, redis.Nil):
+		fmt.Println("key does not exist")
+	case err != nil:
+		fmt.Println("get failed:: ", err)
+		return out, err
 	}
 
 	if in.VerifyCode != otpFound {
@@ -245,7 +285,6 @@ func (s *sUserLogin) UpdatePasswordRegister(ctx context.Context, in *model.Updat
 	if err != nil {
 		return response.ErrCodeAddUserBase, err
 	}
-
 
 	user_id, err := newUserBase.LastInsertId()
 	if err != nil {

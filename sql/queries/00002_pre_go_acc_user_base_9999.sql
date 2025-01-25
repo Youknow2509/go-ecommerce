@@ -21,6 +21,10 @@ INSERT INTO `pre_go_acc_user_base_9999` (
     ?, ?, ?, NOW(), NOW()
 );
 
+-- name: UpdatePassword :exec
+UPDATE `pre_go_acc_user_base_9999` 
+SET user_password = ? WHERE user_id = ?;
+
 -- name: LoginUserBase :exec
 UPDATE `pre_go_acc_user_base_9999`
 SET user_login_time = NOW(), user_login_ip = ?

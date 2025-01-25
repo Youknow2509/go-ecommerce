@@ -117,3 +117,18 @@ func (q *Queries) LogoutUserBase(ctx context.Context, userAccount string) error 
 	_, err := q.db.ExecContext(ctx, logoutUserBase, userAccount)
 	return err
 }
+
+const updatePassword = `-- name: UpdatePassword :exec
+UPDATE ` + "`" + `pre_go_acc_user_base_9999` + "`" + ` 
+SET user_password = ? WHERE user_id = ?
+`
+
+type UpdatePasswordParams struct {
+	UserPassword string
+	UserID       int32
+}
+
+func (q *Queries) UpdatePassword(ctx context.Context, arg UpdatePasswordParams) error {
+	_, err := q.db.ExecContext(ctx, updatePassword, arg.UserPassword, arg.UserID)
+	return err
+}
