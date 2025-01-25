@@ -7,4 +7,8 @@ const (
 	TIME_OTP_REGISTER int = 1
 
 	EMAIL_HOST = "lytranvinh.work@gmail.com"
+
+	TWO_FACTOR_EMAIL = "EMAIL"
+	TWO_FACTOR_SMS = "SMS"
+	
 )

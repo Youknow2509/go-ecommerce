@@ -39,6 +39,9 @@ const (
 	
 	ErrCodeAddUserInfo = 90001
 	ErrCodeUserNotFound = 90002
+
+	// two factor authentication code
+	ErrCodeTwoFactorAuthSetupFailed = 9002
 )
 
 // message
@@ -68,5 +71,5 @@ var msg = map[int]string{
 	ErrCodeUserNotFound: "user not found",
 	ErrCodeAuthFailed: "auth failed",
 	ErrCodeBindLoginInput: "bind login input failed",
-	
+	ErrCodeTwoFactorAuthSetupFailed: "two factor authentication setup failed",
 }

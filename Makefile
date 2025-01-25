@@ -77,7 +77,7 @@ sqlc_generate:
 # Goosee - Create a new migration
 goose_create:
 	@echo "${YELLOW_COLOR_BG}Creating a new migration${RESET_COLOR}"
-	${GOOSE} -dir ${GOOSE_PATH_SCHEMA} create $(NAME)sql
+	${GOOSE} -dir ${GOOSE_PATH_SCHEMA} create $(NAME) sql
 	@echo "${GREEN_COLOR_BG}Migration created${RESET_COLOR}"
 
 # Goose - Migrate the DB up by 1 
