@@ -42,6 +42,7 @@ const (
 
 	// two factor authentication code
 	ErrCodeTwoFactorAuthSetupFailed = 9002
+	ErrCodeTwoFactorAuthFailed = 9003
 )
 
 // message
@@ -72,4 +73,5 @@ var msg = map[int]string{
 	ErrCodeAuthFailed: "auth failed",
 	ErrCodeBindLoginInput: "bind login input failed",
 	ErrCodeTwoFactorAuthSetupFailed: "two factor authentication setup failed",
+	ErrCodeTwoFactorAuthFailed: "two factor authentication failed",
 }

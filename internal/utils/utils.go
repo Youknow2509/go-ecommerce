@@ -8,6 +8,16 @@ import (
 	"github.com/google/uuid"
 )
 
+/**
+ * Get key OTP Two Factor in cache 
+ */
+func GetTwoFactorKey(key string) string {
+	return fmt.Sprintf("u:%s:2fa", key)
+}
+
+/**
+ * Get key OTP in cache
+ */
 func GetUserKey(key string) string {
 	return fmt.Sprintf("u:%s:otp", key)
 }
