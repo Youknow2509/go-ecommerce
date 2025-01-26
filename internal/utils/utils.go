@@ -9,16 +9,23 @@ import (
 )
 
 /**
- * Get key OTP Two Factor in cache 
+ * Get key OTP 2FA Auth send
  */
-func GetTwoFactorKey(key string) string {
+func GetTwoFactorKeyVerify(key string) string {
+	return fmt.Sprintf("u:%s:2fa:send", key)
+}
+
+/**
+ * Get key OTP Two Factor Verify in cache 
+ */
+func GetTwoFactorKeyVerifyRegister(key string) string {
 	return fmt.Sprintf("u:%s:2fa", key)
 }
 
 /**
- * Get key OTP in cache
+ * Get key OTP verify user register in cache 
  */
-func GetUserKey(key string) string {
+func GetUserRegisterKeyVerify(key string) string {
 	return fmt.Sprintf("u:%s:otp", key)
 }
 
