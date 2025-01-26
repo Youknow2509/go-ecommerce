@@ -12,22 +12,28 @@ type InfoUserUUID struct {
 	UserAccount string
 }
 
-// helper get uuid from context
+/**
+ * Get UUID in header contact after authorization middleware 
+ * (middleware add new parameter in header)
+ */
 func getSubjectUUID(ctx context.Context) (string, error) {
-	sUUID, ok := ctx.Value("subjectUUID").(string)
+	sUUID, ok := ctx.Value("SUBJECT_UUID").(string)
 	if !ok {
 		return "", errors.New("uuid not found in context")
 	}
 	return sUUID, nil
 }
 
-// Get userId from uuid with context
+/**
+ *  Get userID from context in header field
+ *  Header field add new parameter when auth middleware 
+ */ 
 func GetUserIdFromUUID(ctx context.Context) (uint64, error) {
 	sUUID, err := getSubjectUUID(ctx)
 	if err != nil {
 		return 0, err
 	}
-	// get infoUser Redis from uuid
+	// get infoUser Redis from uuid 
     var userInfo InfoUserUUID
 	if err := cache.GetCache(ctx, sUUID, &userInfo); err != nil {
 		return 0, err
