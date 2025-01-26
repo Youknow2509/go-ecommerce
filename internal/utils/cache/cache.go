@@ -9,6 +9,10 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+/**
+ * Get data in cache with key
+ * Save data to obj use pointer
+ */
 func GetCache(ctx context.Context, key string, obj interface{}) error {
 	rs, err := global.Rdb.Get(ctx, key).Result()
 	if err == redis.Nil {

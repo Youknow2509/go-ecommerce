@@ -5,6 +5,7 @@ import (
 	// "github.com/Youknow2509/go-ecommerce/internal/repo"
 	// "github.com/Youknow2509/go-ecommerce/internal/service"
 	"github.com/Youknow2509/go-ecommerce/internal/controller/account"
+	"github.com/Youknow2509/go-ecommerce/internal/middlewares"
 	// "github.com/Youknow2509/go-ecommerce/internal/wire"
 	"github.com/gin-gonic/gin"
 )
@@ -41,10 +42,12 @@ func (ur *UserRouter) InitUserRouter(Router *gin.RouterGroup) {
 
 	// private router
 	userRouterPrivate := Router.Group("/user")
+	userRouterPrivate.Use(middlewares.AuthenMiddleware())
 	// userRouterPrivate.Use(Limmited())
 	// userRouterPrivate.Use(Authen())
 	// userRouterPrivate.Use(Permission())
 	{
 		userRouterPrivate.GET("/get_info")
+		userRouterPrivate.POST("/two-factor/setup", account.TwoFA.SetupTwoFactorAuth)
 	}
 }

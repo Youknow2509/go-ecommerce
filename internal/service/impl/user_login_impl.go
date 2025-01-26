@@ -112,7 +112,7 @@ func (s *sUserLogin) Login(ctx context.Context, in *model.LoginInput) (codeResul
 		return response.ErrCodeAuthFailed, out, fmt.Errorf("convert json failed: %w", err)
 	}
 	// give infoUserJson to redis with key = subToken
-	err = global.Rdb.Set(ctx, subToken, infoUserJson, time.Duration(consts.TIME_OTP_REGISTER)*time.Minute).Err()
+	err = global.Rdb.Set(ctx, subToken, infoUserJson, time.Duration(consts.TIME_2FA_OTP_REGISTER)*time.Minute).Err()
 	if err != nil {
 		return response.ErrCodeAuthFailed, out, fmt.Errorf("set redis failed: %w", err)
 	}
