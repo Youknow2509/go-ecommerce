@@ -64,9 +64,9 @@ func (s *sUserLogin) SetupTwoFactorAuth(ctx context.Context, in *model.SetupTwoF
 		return response.ErrCodeTwoFactorAuthSetupFailed, err
 	}
 	// send otp to email
-	keyUserTwoFactor := utils.GetTwoFactorKey(strconv.Itoa(int(in.UserId)))
+	keyUserTwoFactor := utils.GetTwoFactorKeyVerify(strconv.Itoa(int(in.UserId)))
 	if global.Rdb.Get(ctx, keyUserTwoFactor).Val() != "" {
-		//TODO: Bloclk spam ...
+		//TODO: Bloclk spam
 		return response.ErrCodeSuccess, errors.New("OTP exists but not registered")
 	}
 	otp := random.GenerateSixDigitOtp()
@@ -99,7 +99,7 @@ func (s *sUserLogin) VerifyTwoFactorAuth(ctx context.Context, in *model.TwoFacto
 		return response.ErrCodeTwoFactorAuthFailed, errors.New("two factor authentication is not enabled")
 	}
 	// check otp in cache redis
-	keyInputHash := utils.GetTwoFactorKey(strconv.Itoa(int(in.UserId)))
+	keyInputHash := utils.GetTwoFactorKeyVerify(strconv.Itoa(int(in.UserId)))
 	if keyInputHash == "" {
 		return response.ErrCodeTwoFactorAuthFailed, errors.New("key input hash is empty")
 	}
@@ -142,7 +142,30 @@ func (s *sUserLogin) Login(ctx context.Context, in *model.LoginInput) (codeResul
 	if !crypto.ComparePasswordWithHash(in.UserPassword, userBase.UserSalt, userBase.UserPassword) {
 		return response.ErrCodeAuthFailed, out, errors.New("password not match")
 	}
-	// TODO check two-factor authentication
+	// check two-factor authentication
+	isTwoFactory2FA, err := s.r.IsTwoFactorEnabled(ctx, uint32(userBase.UserID))
+	if err != nil {
+		return response.ErrCodeAuthFailed, out, err
+	}
+	if isTwoFactory2FA > 0 {
+		// key generation
+		keyOTP2FA := utils.GetTwoFactorKeyVerify(strconv.Itoa(int(userBase.UserID)))
+		// check two-factor authentication in cache redis	
+		if global.Rdb.Get(ctx, keyOTP2FA).Val() != "" {
+			return response.ErrCodeSuccess, out, errors.New("two-factor authentication")
+		}
+		// generate otp
+		otpNew2FA := random.GenerateSixDigitOtp()
+		// save otp in cache redis
+		err = global.Rdb.Set(ctx, keyOTP2FA, otpNew2FA, time.Duration(consts.TIME_OTP_REGISTER)*time.Minute).Err()
+		if err != nil {
+			return response.ErrCodeAuthFailed, out, err
+		}
+		// send otp to email
+		go create.FactoryCreateSendTo(sendto.TYPE_SENDGRID).SendTemplateEmailOTP([]string{userBase.UserAccount}, consts.EMAIL_HOST, "otp-auth.html", map[string]interface{}{"otp": strconv.Itoa(otpNew2FA)})
+		out.Message = "two-factor authentication"
+		return response.ErrCodeSuccess, out, errors.New("two-factor authentication")
+	}
 
 	// upgrade state login
 	go s.r.LoginUserBase(ctx, database.LoginUserBaseParams{
@@ -198,7 +221,7 @@ func (s *sUserLogin) Register(ctx context.Context, in *model.RegisterInput) (cod
 	}
 
 	// 3. create otp
-	userKey := utils.GetUserKey(hashKey) // fmt.Sprintf("u:%s:otp", key)
+	userKey := utils.GetTwoFactorKeyVerifyRegister(hashKey) // fmt.Sprintf("u:%s:otp", key)
 	otpFound, err := global.Rdb.Get(ctx, userKey).Result()
 
 	fmt.Println("userKey::", userKey)
@@ -276,7 +299,7 @@ func (s *sUserLogin) VerifyOTP(ctx context.Context, in *model.VerifyInput) (out 
 	hashKey := crypto.GetHash(strings.ToLower(in.VerifyKey))
 
 	// get otp
-	otpFound, err := global.Rdb.Get(ctx, utils.GetUserKey(hashKey)).Result()
+	otpFound, err := global.Rdb.Get(ctx, utils.GetTwoFactorKeyVerifyRegister(hashKey)).Result()
 	switch {
 	case errors.Is(err, redis.Nil):
 		fmt.Println("key does not exist")
