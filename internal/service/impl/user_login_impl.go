@@ -64,18 +64,70 @@ func (s *sUserLogin) SetupTwoFactorAuth(ctx context.Context, in *model.SetupTwoF
 		return response.ErrCodeTwoFactorAuthSetupFailed, err
 	}
 	// send otp to email
-	keyUserTwoFactor := crypto.GetHash("2fa" + strconv.Itoa(int(in.UserId)))
+	keyUserTwoFactor := utils.GetTwoFactorKey(strconv.Itoa(int(in.UserId)))
+	if global.Rdb.Get(ctx, keyUserTwoFactor).Val() != "" {
+		//TODO: Bloclk spam ...
+		return response.ErrCodeSuccess, errors.New("OTP exists but not registered")
+	}
 	otp := random.GenerateSixDigitOtp()
-	go global.Rdb.Set(ctx, keyUserTwoFactor, otp, time.Duration(consts.TIME_OTP_REGISTER)*time.Minute).Err()
-	
-	
-	// TODO
+	err = global.Rdb.Set(ctx, keyUserTwoFactor, otp, time.Duration(consts.TIME_OTP_REGISTER)*time.Minute).Err()
+	if err == redis.Nil {
+		global.Logger.Info("OTP not found err resid: nil")
+		global.Logger.Info(fmt.Sprint("OTP set: ", otp))
+	} else if err != nil {
+		return response.ErrCodeTwoFactorAuthFailed, err
+	}
+
+	err = create.FactoryCreateSendTo(sendto.TYPE_SENDGRID).SendTemplateEmailOTP([]string{in.TwoFactorEmail}, consts.EMAIL_HOST, "otp-auth.html", map[string]interface{}{"otp": strconv.Itoa(otp)})
+	if err != nil {
+		global.Logger.Error("Error sending OTP to email")
+		return
+	}
+	global.Logger.Info(fmt.Sprintf("OTP verify 2fa is sent to email: %s sucess", in.TwoFactorEmail))
+
 	return response.ErrCodeSuccess, nil
 }
 
 // verify authentication
 func (s *sUserLogin) VerifyTwoFactorAuth(ctx context.Context, in *model.TwoFactorVerificationInput) (codeResult int, err error) {
-	// TODO
+	// check isTwoFactorAuthEnabled
+	isTwoFactorAuth, err := s.r.IsTwoFactorEnabled(ctx, in.UserId)
+	if err != nil {
+		return response.ErrCodeTwoFactorAuthFailed, err
+	}
+	if isTwoFactorAuth > 0 {
+		return response.ErrCodeTwoFactorAuthFailed, errors.New("two factor authentication is not enabled")
+	}
+	// check otp in cache redis
+	keyInputHash := utils.GetTwoFactorKey(strconv.Itoa(int(in.UserId)))
+	if keyInputHash == "" {
+		return response.ErrCodeTwoFactorAuthFailed, errors.New("key input hash is empty")
+	}
+	otpFound, err := global.Rdb.Get(ctx, keyInputHash).Result()
+	if err == redis.Nil && otpFound != "" {
+		global.Logger.Info("OTP not found err resid: nil")
+		global.Logger.Info(fmt.Sprint("OTP found: ", otpFound))
+	} else if err != nil {
+		return response.ErrCodeTwoFactorAuthFailed, err
+	}
+	if in.TwoFactorCode != otpFound {
+		return response.ErrCodeTwoFactorAuthFailed, errors.New("OTP not match")
+	}
+	// upgrade status two-factor authentication
+	err = s.r.UpdateTwoFactorStatus(ctx, database.UpdateTwoFactorStatusParams{
+		UserID:            in.UserId,
+		TwoFactorAuthType: database.PreGoAccUserTwoFactor9999TwoFactorAuthTypeEMAIL,
+	})
+	if err != nil {
+		return response.ErrCodeTwoFactorAuthFailed, err
+	}
+	// remove otp in cache redis
+	err = global.Rdb.Del(ctx, keyInputHash).Err()
+	if err != nil {
+		global.Logger.Error("Error deleting OTP from cache redis ")
+		return response.ErrCodeTwoFactorAuthFailed, err
+	}
+
 	return response.ErrCodeSuccess, nil
 }
 
