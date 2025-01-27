@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/Youknow2509/go-ecommerce/internal/consts"
 	"github.com/Youknow2509/go-ecommerce/internal/utils/cache"
 )
 
@@ -17,7 +18,7 @@ type InfoUserUUID struct {
  * (middleware add new parameter in header)
  */
 func getSubjectUUID(ctx context.Context) (string, error) {
-	sUUID, ok := ctx.Value("SUBJECT_UUID").(string)
+	sUUID, ok := ctx.Value(consts.PAYLOAD_SUBJECT_UUID).(string)
 	if !ok {
 		return "", errors.New("uuid not found in context")
 	}
