@@ -34,3 +34,8 @@
 - Handle send mail:
     + [sendgrid](https://sendgrid.com)
     + [smtp](https://pkg.go.dev/net/smtp)
+
+- Handle monitoring:
+    + [prometheus](https://prometheus.io/)
+    + [grafana](https://grafana.com/)
+    + [node_exporter](https://www.google.com/search?q=node-exporter)
