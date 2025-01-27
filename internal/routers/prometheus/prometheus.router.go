@@ -1,7 +1,6 @@
 package prometheus
 
 import (
-	"github.com/Youknow2509/go-ecommerce/internal/middlewares"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -16,5 +15,5 @@ func (p *PrometheusRouter) InitRouter(Router *gin.Engine) {
 	// {
 	// 	prometheusRouter.GET("/metrics", gin.WrapH(promhttp.Handler()))
 	// }
-	Router.GET("/metrics", middlewares.PrometheusMiddleware(), gin.WrapH(promhttp.Handler()))
+	Router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 }

@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"github.com/Youknow2509/go-ecommerce/global"
+	"github.com/Youknow2509/go-ecommerce/internal/middlewares"
 	"github.com/Youknow2509/go-ecommerce/internal/routers"
 	"github.com/gin-gonic/gin"
 )
@@ -23,7 +24,12 @@ func InitRouter() *gin.Engine {
 	// middlewares
 	router.Use() // logger
 	router.Use() // cross
-	router.Use() // limiter global
+	// middlewares limiter 
+	router.Use(middlewares.NewRateLimiter().GlobalLimiter())
+	router.Use(middlewares.NewRateLimiter().PublicAPILimiter())
+	router.Use(middlewares.NewRateLimiter().UserPrivateAPILimiter())
+	// middlewares prometheus
+	router.Use(middlewares.PrometheusMiddleware())
 
 	manageRouter := routers.RouterGroupApp.Manage
 	userRouter := routers.RouterGroupApp.User
@@ -43,9 +49,6 @@ func InitRouter() *gin.Engine {
 		manageRouter.InitUserRouter(MainGroup)
 		//... other routes...
 	}
-	// {
-	// 	prometheusRouter.InitRouter(MainGroup)
-	// }
 
 	prometheusRouter.InitRouter(router)
 

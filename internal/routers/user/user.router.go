@@ -1,12 +1,8 @@
 package user
 
 import (
-	// "github.com/Youknow2509/go-ecommerce/internal/controller"
-	// "github.com/Youknow2509/go-ecommerce/internal/repo"
-	// "github.com/Youknow2509/go-ecommerce/internal/service"
 	"github.com/Youknow2509/go-ecommerce/internal/controller/account"
-	"github.com/Youknow2509/go-ecommerce/internal/middlewares"
-	// "github.com/Youknow2509/go-ecommerce/internal/wire"
+	"github.com/Youknow2509/go-ecommerce/internal/middlewares"	// "github.com/Youknow2509/go-ecommerce/internal/wire"
 	"github.com/gin-gonic/gin"
 )
 
@@ -30,7 +26,6 @@ func (ur *UserRouter) InitUserRouter(Router *gin.RouterGroup) {
 	// -> handle with wire go
 	// userController, _ := wire.InitUserRouterHandle()
 	userRouterPublic := Router.Group("/user")
-	userRouterPublic.Use(middlewares.PrometheusMiddleware())
 	{
 		// userRouterPublic.POST("/register", userController.Register)
 		userRouterPublic.POST("/register", account.Login.Register)
@@ -44,7 +39,6 @@ func (ur *UserRouter) InitUserRouter(Router *gin.RouterGroup) {
 	// private router
 	userRouterPrivate := Router.Group("/user")
 	userRouterPrivate.Use(middlewares.AuthenMiddleware())
-	userRouterPrivate.Use(middlewares.PrometheusMiddleware())
 	// userRouterPrivate.Use(Limmited())
 	// userRouterPrivate.Use(Authen())
 	// userRouterPrivate.Use(Permission())
