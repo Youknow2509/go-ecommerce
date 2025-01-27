@@ -30,6 +30,7 @@ func (ur *UserRouter) InitUserRouter(Router *gin.RouterGroup) {
 	// -> handle with wire go
 	// userController, _ := wire.InitUserRouterHandle()
 	userRouterPublic := Router.Group("/user")
+	userRouterPublic.Use(middlewares.PrometheusMiddleware())
 	{
 		// userRouterPublic.POST("/register", userController.Register)
 		userRouterPublic.POST("/register", account.Login.Register)
@@ -43,6 +44,7 @@ func (ur *UserRouter) InitUserRouter(Router *gin.RouterGroup) {
 	// private router
 	userRouterPrivate := Router.Group("/user")
 	userRouterPrivate.Use(middlewares.AuthenMiddleware())
+	userRouterPrivate.Use(middlewares.PrometheusMiddleware())
 	// userRouterPrivate.Use(Limmited())
 	// userRouterPrivate.Use(Authen())
 	// userRouterPrivate.Use(Permission())

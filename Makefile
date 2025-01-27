@@ -24,7 +24,7 @@ GOOSE_PATH_QUERIES = sql/queries
 # Phony Targets
 .PHONY: help
 .PHONY: install_path_pkg run_server wire regenerate_wire clear_log cre_env deps build test coverage
-.PHONY: docker_build docker_run docker_stop docker_stop_v
+.PHONY: docker_build docker_run docker_stop docker_stop_v docker_run_monitoring docker_stop_monitoring docker_stop_monitoring_v
 .PHONY: exec_mysql mysql_dump exec_redis exec_kafka_ui
 .PHONY: goose_create goose_up goose_down goose_status goose_fix goose_redo goose_reset goose_clean goose_up_by_one
 .PHONY: swag
@@ -48,6 +48,9 @@ help:
 	@echo "\t ${YELLOW_COLOR_BG}docker_run${RESET_COLOR} \t Run Docker containers"
 	@echo "\t ${YELLOW_COLOR_BG}docker_stop${RESET_COLOR} \t Stop Docker containers"
 	@echo "\t ${YELLOW_COLOR_BG}docker_stop_v${RESET_COLOR} \t Stop and remove Docker volumes"
+	@echo "\t ${YELLOW_COLOR_BG}docker_run_monitoring${RESET_COLOR} \t Run Prometheus, Graphana, ... Docker container"
+	@echo "\t ${YELLOW_COLOR_BG}docker_stop_monitoring${RESET_COLOR} \t Stop Prometheus, Graphana, ... Docker container"
+	@echo "\t ${YELLOW_COLOR_BG}docker_stop_monitoring_v${RESET_COLOR} \t Stop and remove Prometheus, Graphana, ... Docker container"
 	@echo "\nContainer Exec Commands:"
 	@echo "\t ${YELLOW_COLOR_BG}exec_mysql${RESET_COLOR} \t Execute MySQL CLI"
 	@echo "\t ${YELLOW_COLOR_BG}mysql_dump${RESET_COLOR} \t Render SQL file in database"
@@ -183,6 +186,24 @@ docker_stop:
 docker_stop_v:
 	@echo "${YELLOW_COLOR_BG}Stopping and removing Docker volumes${RESET_COLOR}"
 	docker compose down --volumes --remove-orphans
+	@echo "${GREEN_COLOR_BG}Docker containers and volumes removed${RESET_COLOR}"
+
+# Docker Run Monitoring
+docker_run_monitoring:
+	@echo "${YELLOW_COLOR_BG}Running Prometheus, Grafana, ... Docker containers${RESET_COLOR}"
+	docker compose -f docker-compose-monitoring.yml up -d
+	@echo "${GREEN_COLOR_BG}Docker containers started${RESET_COLOR}"
+
+# Docker Stop Monitoring
+docker_stop_monitoring:
+	@echo "${YELLOW_COLOR_BG}Stopping Prometheus, Grafana, ... Docker containers${RESET_COLOR}"
+	docker compose -f docker-compose-monitoring.yml down
+	@echo "${GREEN_COLOR_BG}Docker containers stopped${RESET_COLOR}"
+
+# Docker Stop Monitoring with Volume Removal
+docker_stop_monitoring_v:
+	@echo "${YELLOW_COLOR_BG}Stopping and removing Prometheus, Grafana, ... Docker containers${RESET_COLOR}"
+	docker compose -f docker-compose-monitoring.yml down --volumes --remove-orphans
 	@echo "${GREEN_COLOR_BG}Docker containers and volumes removed${RESET_COLOR}"
 
 # MySQL Container Exec

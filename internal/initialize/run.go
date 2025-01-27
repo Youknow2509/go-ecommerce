@@ -12,8 +12,8 @@ import (
 func Run() *gin.Engine {
 	// load configuration
 	LoadConfig()
-	fmt.Println("@@@ Loader configuration")
-	
+	fmt.Println("@@@ Loader configuration")	
+
 	// connect to rabbit mq
 	InitRabbitMQ()
 	fmt.Println("RabbitMQ initialized")
@@ -22,6 +22,10 @@ func Run() *gin.Engine {
 	// initialize logger
 	InitLogger()
 	global.Logger.Info("Logger initialized")
+
+	// initialize prometheus
+	InitPrometheus()
+	global.Logger.Info("Prometheus initialized")
 
 	// connect to my sql
 	InitMysql()
