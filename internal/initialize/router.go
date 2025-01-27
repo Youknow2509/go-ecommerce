@@ -27,6 +27,7 @@ func InitRouter() *gin.Engine {
 
 	manageRouter := routers.RouterGroupApp.Manage
 	userRouter := routers.RouterGroupApp.User
+	prometheusRouter := routers.RouterGroupApp.Prometheus
 
 	MainGroup := router.Group("/v1")
 	{
@@ -42,6 +43,11 @@ func InitRouter() *gin.Engine {
 		manageRouter.InitUserRouter(MainGroup)
 		//... other routes...
 	}
+	// {
+	// 	prometheusRouter.InitRouter(MainGroup)
+	// }
+
+	prometheusRouter.InitRouter(router)
 
 	return router
 }

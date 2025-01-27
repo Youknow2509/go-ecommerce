@@ -1,5 +1,7 @@
 package setting
 
+import "github.com/prometheus/client_golang/prometheus"
+
 // Struct Config
 type Config struct {
 	Server   ServerSetting   `mapstructure:"server"`
@@ -63,4 +65,13 @@ type JwtSetting struct {
 	TOKEN_HOUR_LIFESPAN uint   `mapstructure:"token_hour_lifespan"`
 	JWT_EXPIRATION      string `mapstructure:"jwt_expiration"`
 	API_SECRET          string `mapstructure:"api_secret"`
+}
+
+// Prometheus setting structure
+type PrometheusSetting struct {
+	RequestCount *prometheus.CounterVec
+	ErrorCount   *prometheus.CounterVec
+	RequestDuration *prometheus.HistogramVec
+	RequestSizeBytes *prometheus.HistogramVec
+	ResponseSizeBytes *prometheus.HistogramVec
 }
