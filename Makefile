@@ -28,6 +28,7 @@ GOOSE_PATH_QUERIES = sql/queries
 .PHONY: exec_mysql mysql_dump exec_redis exec_kafka_ui
 .PHONY: goose_create goose_up goose_down goose_status goose_fix goose_redo goose_reset goose_clean goose_up_by_one
 .PHONY: swag
+.PHONY: vegeta_benmark
 
 # Help Command
 help:
@@ -70,6 +71,9 @@ help:
 	@echo "\t ${YELLOW_COLOR_BG}sqlc_generate${RESET_COLOR} \t Generate SQLC queries"
 	@echo "\nSwagger Commands:"
 	@echo "\t ${YELLOW_COLOR_BG}swag${RESET_COLOR} \t Handle swagger"
+	@echo "\nVegeta attack benmark Commands:"
+	@echo "\t ${YELLOW_COLOR_BG}vegeta_benmark${RESET_COLOR} \t Run vegeta attack benmark"
+	
 
 # SQLC - Generate
 sqlc_generate:
@@ -261,3 +265,10 @@ install_path_pkg:
 # handle swagger
 swag:
 	swag init -g ./cmd/server/main.go -o ./cmd/swag/docs
+
+# vegeta attack benmark
+vegeta_benmark:
+	@echo "${YELLOW_COLOR_BG}Run vegeta attack benmark${RESET_COLOR}"
+	@echo "$(METHOD) $(URL)" | vegeta attack -name=$(RATE)qps -duration=$(DURATION) -rate=$(RATE) | tee benchmark/results_$(RATE)qps.bin | vegeta report
+	# echo "GET http://localhost:8082/v1/user/info" | vegeta attack -name=500gps -duration=1s -rate=110 | tee benchmark/results_05qps.bin | vegeta report
+	@echo "${GREEN_COLOR_BG}Vegeta attack benmark completed${RESET_COLOR}"
