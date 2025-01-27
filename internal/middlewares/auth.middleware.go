@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	"github.com/Youknow2509/go-ecommerce/internal/consts"
 	"github.com/Youknow2509/go-ecommerce/internal/utils/auth"
 	"github.com/gin-gonic/gin"
 )
@@ -28,7 +29,7 @@ func AuthenMiddleware() gin.HandlerFunc {
 		}
 		// update claims to context
 		log.Println("Claims:: uuid:: ", claims.Subject)
-		ctx := context.WithValue(c.Request.Context(), "SUBJECT_UUID", claims.Subject)
+		ctx := context.WithValue(c.Request.Context(), consts.PAYLOAD_SUBJECT_UUID, claims.Subject)
 		c.Request = c.Request.WithContext(ctx)
 		c.Next()
 	}
