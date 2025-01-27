@@ -8,7 +8,7 @@ const (
 	ErrInvalidOTP   = 30002 // Invalid otp
 	ErrSendEmailOTP = 30003 // Send email failed
 
-	ErrCodeAuthFailed = 40001 // Auth failed
+	ErrCodeAuthFailed = 401 // Auth failed
 
 	// Register Code
 	ErrCodeUserHasExist = 50001 // User has exist
@@ -43,6 +43,9 @@ const (
 	// two factor authentication code
 	ErrCodeTwoFactorAuthSetupFailed = 9002
 	ErrCodeTwoFactorAuthFailed = 9003
+
+	// rate limit code
+	ErrCodeTooManyRequests = 429
 )
 
 // message
@@ -74,4 +77,5 @@ var msg = map[int]string{
 	ErrCodeBindLoginInput: "bind login input failed",
 	ErrCodeTwoFactorAuthSetupFailed: "two factor authentication setup failed",
 	ErrCodeTwoFactorAuthFailed: "two factor authentication failed",
+	ErrCodeTooManyRequests: "too many requests",
 }
