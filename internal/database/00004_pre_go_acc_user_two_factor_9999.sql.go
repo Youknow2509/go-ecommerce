@@ -20,8 +20,8 @@ ON DUPLICATE KEY UPDATE
 
 type AddOrUpdateEmailParams struct {
 	UserID           uint32
-	TwoFactorEmail   string
-	TwoFactorEmail_2 string
+	TwoFactorEmail   sql.NullString
+	TwoFactorEmail_2 sql.NullString
 }
 
 func (q *Queries) AddOrUpdateEmail(ctx context.Context, arg AddOrUpdateEmailParams) error {
@@ -54,7 +54,7 @@ VALUES (?, ?, ?, "OTP", FALSE, NOW(), NOW())
 type EnableTwoFactorTypeEmailParams struct {
 	UserID            uint32
 	TwoFactorAuthType PreGoAccUserTwoFactor9999TwoFactorAuthType
-	TwoFactorEmail    string
+	TwoFactorEmail    sql.NullString
 }
 
 func (q *Queries) EnableTwoFactorTypeEmail(ctx context.Context, arg EnableTwoFactorTypeEmailParams) error {
@@ -74,8 +74,8 @@ type GetTwoFactorMethodByIDRow struct {
 	UserID              uint32
 	TwoFactorAuthType   PreGoAccUserTwoFactor9999TwoFactorAuthType
 	TwoFactorAuthSecret string
-	TwoFactorEmail      string
-	TwoFactorPhone      string
+	TwoFactorEmail      sql.NullString
+	TwoFactorPhone      sql.NullString
 	TwoFactorIsActive   bool
 	TwoFactorCreatedAt  sql.NullTime
 	TwoFactorUpdatedAt  sql.NullTime
@@ -114,8 +114,8 @@ type GetTwoFactorMethodByIDAndByTypeRow struct {
 	UserID              uint32
 	TwoFactorAuthType   PreGoAccUserTwoFactor9999TwoFactorAuthType
 	TwoFactorAuthSecret string
-	TwoFactorEmail      string
-	TwoFactorPhone      string
+	TwoFactorEmail      sql.NullString
+	TwoFactorPhone      sql.NullString
 	TwoFactorIsActive   bool
 	TwoFactorCreatedAt  sql.NullTime
 	TwoFactorUpdatedAt  sql.NullTime
@@ -167,8 +167,8 @@ type GetUserTwoFactoryMethodsRow struct {
 	UserID              uint32
 	TwoFactorAuthType   PreGoAccUserTwoFactor9999TwoFactorAuthType
 	TwoFactorAuthSecret string
-	TwoFactorEmail      string
-	TwoFactorPhone      string
+	TwoFactorEmail      sql.NullString
+	TwoFactorPhone      sql.NullString
 	TwoFactorIsActive   bool
 	TwoFactorCreatedAt  sql.NullTime
 	TwoFactorUpdatedAt  sql.NullTime

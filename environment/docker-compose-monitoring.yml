@@ -6,12 +6,17 @@ services:
     container_name: prometheus
     volumes:
       - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./data:/prometheus
     ports:
       - "9090:9090"
     networks:
-      - monitoring
+      - monitoring-network-local
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries.path=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--web.enabled-lifecycle"
 
   grafana:
     image: grafana/grafana-oss:latest
@@ -22,7 +27,9 @@ services:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
     networks:
-      - monitoring
+      - monitoring-network-local
+    volumes:
+      - ./data/grafana_data/:/var/lib/grafana
     depends_on:
       - prometheus
   
@@ -42,8 +49,8 @@ services:
     ports:
       - "9100:9100"
     networks:
-      - monitoring
+      - monitoring-network-local
 
 networks:
-  monitoring:
+  monitoring-network-local:
     driver: bridge

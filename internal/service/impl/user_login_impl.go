@@ -58,7 +58,7 @@ func (s *sUserLogin) SetupTwoFactorAuth(ctx context.Context, in *model.SetupTwoF
 	err = s.r.EnableTwoFactorTypeEmail(ctx, database.EnableTwoFactorTypeEmailParams{
 		UserID:            in.UserId,
 		TwoFactorAuthType: database.PreGoAccUserTwoFactor9999TwoFactorAuthTypeEMAIL,
-		TwoFactorEmail:    in.TwoFactorEmail,
+		TwoFactorEmail:    sql.NullString{String: in.TwoFactorEmail, Valid: true},
 	})
 	if err != nil {
 		return response.ErrCodeTwoFactorAuthSetupFailed, err

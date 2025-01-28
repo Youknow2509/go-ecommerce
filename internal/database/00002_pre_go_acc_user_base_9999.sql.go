@@ -73,9 +73,21 @@ FROM ` + "`" + `pre_go_acc_user_base_9999` + "`" + `
 WHERE user_account = ?
 `
 
-func (q *Queries) GetOneUserInfoAdmin(ctx context.Context, userAccount string) (PreGoAccUserBase9999, error) {
+type GetOneUserInfoAdminRow struct {
+	UserID         int32
+	UserAccount    string
+	UserPassword   string
+	UserSalt       string
+	UserLoginTime  sql.NullTime
+	UserLogoutTime sql.NullTime
+	UserLoginIp    sql.NullString
+	UserCreatedAt  sql.NullTime
+	UserUpdatedAt  sql.NullTime
+}
+
+func (q *Queries) GetOneUserInfoAdmin(ctx context.Context, userAccount string) (GetOneUserInfoAdminRow, error) {
 	row := q.db.QueryRowContext(ctx, getOneUserInfoAdmin, userAccount)
-	var i PreGoAccUserBase9999
+	var i GetOneUserInfoAdminRow
 	err := row.Scan(
 		&i.UserID,
 		&i.UserAccount,
