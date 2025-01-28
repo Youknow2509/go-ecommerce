@@ -1,5 +1,9 @@
 version: '3.9'
 
+networks:
+  go-ecommerce-local-network:
+    driver: bridge
+
 services:
   # My sql service
   mysql:
@@ -11,7 +15,7 @@ services:
     ports:
       - "${MYSQL_PORT}:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - ./data/mysql_data:/var/lib/mysql
       - ./init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p$MYSQL_ROOT_PASSWORD"]
@@ -19,6 +23,8 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
+    networks:
+      - go-ecommerce-local-network
 
   # Redis service
   redis:
@@ -27,13 +33,15 @@ services:
     ports:
       - "${REDIS_PORT}:6379"
     volumes:
-      - redis_data:/data
+      - ./data/redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
+    networks:
+      - go-ecommerce-local-network
   
   # redis/redisinsight service
   redisinsight:
@@ -45,6 +53,8 @@ services:
       - REDIS_HOSTS=redis:6379
     depends_on:
       - redis
+    networks:
+      - go-ecommerce-local-network
 
   # Zookeeper service - Kafka dependency injection for cluster management and monitoring
   zookeeper:
@@ -55,7 +65,9 @@ services:
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
     volumes:
-      - zookeeper_data:/bitnami/zookeeper
+      - ./data/zookeeper_data:/bitnami/zookeeper
+    networks:
+      - go-ecommerce-local-network
 
   # Kafka service
   kafka:
@@ -92,7 +104,9 @@ services:
     depends_on:
       - zookeeper
     volumes:
-      - kafka_data:/bitnami/kafka
+      - ./data/kafka_data:/bitnami/kafka
+    networks:
+      - go-ecommerce-local-network
 
   # Kafka UI (Optional)
   kafka_ui:
@@ -105,6 +119,8 @@ services:
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:${KAFAK_PORT_INTERNAL}
     depends_on:
       - kafka
+    networks:
+      - go-ecommerce-local-network
 
   # Schema Registry (Optional but recommended)
   schema_registry:
@@ -118,13 +134,15 @@ services:
     depends_on:
       - kafka
       - zookeeper
+    networks:
+      - go-ecommerce-local-network
 
-volumes:
-  mysql_data:
-    driver: local
-  redis_data:
-    driver: local
-  zookeeper_data:
-    driver: local
-  kafka_data:
-    driver: local
+# volumes:
+#   mysql_data:
+#     driver: local
+#   redis_data:
+#     driver: local
+#   zookeeper_data:
+#     driver: local
+#   kafka_data:
+#     driver: local

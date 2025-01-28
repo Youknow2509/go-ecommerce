@@ -100,6 +100,8 @@ type PreGoAccUserBase9999 struct {
 	UserCreatedAt sql.NullTime
 	// Update timestamp
 	UserUpdatedAt sql.NullTime
+	// authentication two factor enabled for the user
+	IsTwoFactorEnabled sql.NullInt32
 }
 
 type PreGoAccUserInfo9999 struct {
@@ -140,9 +142,9 @@ type PreGoAccUserTwoFactor9999 struct {
 	// Ma bi mat xac thuc 2fa
 	TwoFactorAuthSecret string
 	// So dien thoai xac thuc 2fa
-	TwoFactorPhone string
+	TwoFactorPhone sql.NullString
 	// Email xac thuc 2fa
-	TwoFactorEmail string
+	TwoFactorEmail sql.NullString
 	// Trang thai kich hoat xac thuc 2fa
 	TwoFactorIsActive bool
 	// Thoi gian tao xac thuc 2fa
