@@ -5,27 +5,27 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     volumes:
-      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ../config/prometheus.yml:/etc/prometheus/prometheus.yml
       - ./data:/prometheus
     ports:
-      - "9090:9090"
+      - "${MONITORING_PROMETHEUS_PORT}:9090"
     networks:
       - monitoring-network-local
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
-      - "--web.console.libraries.path=/etc/prometheus/console_libraries"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
       - "--web.console.templates=/etc/prometheus/consoles"
-      - "--web.enabled-lifecycle"
+      - "--web.enable-lifecycle"
 
   grafana:
     image: grafana/grafana-oss:latest
     container_name: grafana
     ports:
-      - "3000:3000"
+      - "${MONITORING_GRAFANA_PORT}:3000"
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=${MONITORING_GRAFANA_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${MONITORING_GRAFANA_ADMIN_PASSWORD}
     networks:
       - monitoring-network-local
     volumes:
@@ -47,7 +47,7 @@ services:
       - "--path.sysfs=/host/sys"
       - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
     ports:
-      - "9100:9100"
+      - "${MONITORING_NODE_EXPORTER_PORT}:9100"
     networks:
       - monitoring-network-local
 
