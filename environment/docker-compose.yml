@@ -26,6 +26,19 @@ services:
     networks:
       - go-ecommerce-local-network
 
+  # MySQL Exporter (Prometheus metrics)
+  mysql_exporter:
+    image: prom/mysqld-exporter:latest
+    container_name: mysql_exporter_container
+    ports:
+      - "${MONITORING_MYSQL_EXPORTER_PORT}:9104"  # Exporter metrics port
+    depends_on:
+      - mysql
+    volumes:
+      - ../config/mysql_export_local_cnf.cnf:/.my.cnf
+    networks:
+      - go-ecommerce-local-network
+
   # Redis service
   redis:
     image: redis:7.0
@@ -55,6 +68,20 @@ services:
       - redis
     networks:
       - go-ecommerce-local-network
+
+  # redis metrics service
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: redis-exporter
+    ports:
+      - "${MONITORING_REDIS_EXPORTER_PORT}:9121"
+    networks:
+      - go-ecommerce-local-network
+    command:
+      - "--redis.addr=redis://redis:6379"
+
+    depends_on:
+      - redis
 
   # Zookeeper service - Kafka dependency injection for cluster management and monitoring
   zookeeper:
@@ -121,6 +148,20 @@ services:
       - kafka
     networks:
       - go-ecommerce-local-network
+    
+  # Kafka exporter (use in prometheus)
+  kafka_exporter:
+    image: danielqsj/kafka-exporter:latest
+    container_name: kafka_exporter
+    ports:
+      - "${MONITORING_KAFKA_EXPORTER_PORT}:9308"
+    command:
+      - '--kafka.server=kafka:${KAFAK_PORT_INTERNAL}'
+    depends_on:
+      - kafka
+    networks:
+      - go-ecommerce-local-network
+    restart: on-failure
 
   # Schema Registry (Optional but recommended)
   schema_registry:

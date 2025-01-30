@@ -38,4 +38,9 @@
 - Handle monitoring:
     + [prometheus](https://prometheus.io/)
     + [grafana](https://grafana.com/)
+      + [Go Processes](https://grafana.com/grafana/dashboards/6671-go-processes/) 
+      + [node_exporter](https://grafana.com/grafana/dashboards/1860-node-exporter-full/)
+      + [oliver006/redis_exporter](https://grafana.com/grafana/dashboards/763)
+      + [mysql_exporter](https://grafana.com/grafana/dashboards/14057-mysql/)
+      + [kafka_exporter](https://grafana.com/grafana/dashboards/18276-kafka-dashboard/)
     + [node_exporter](https://www.google.com/search?q=node-exporter)

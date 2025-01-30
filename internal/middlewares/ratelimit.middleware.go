@@ -137,13 +137,16 @@ func (rl *RateLimiter) UserPrivateAPILimiter() gin.HandlerFunc {
 
 // fillterLimitUrlPath
 func (rl *RateLimiter) fillterLimitUrlPath(urlPath string) *limiter.Limiter {
-	if urlPath == "/metrics" {
-		return nil
-	} else if urlPath == "/v1/user/login"{
-		return rl.publicAPIRateLimiter
-	} else if urlPath == "/v1/user/info" {
-		return rl.userPrivateAPIRateLimiter
-	} else {
-		return rl.globalRateLimiter
-	}
+	// if urlPath == "/metrics" {
+	// 	return nil
+	// } else if urlPath == "/swagger/index.html" {
+	// 	return nil
+	// } else if urlPath == "/v1/user/login"{
+	// 	return rl.publicAPIRateLimiter
+	// } else if urlPath == "/v1/user/info" {
+	// 	return rl.userPrivateAPIRateLimiter
+	// } else {
+	// 	return rl.globalRateLimiter
+	// }
+	return nil // TODO: rm it
 }
