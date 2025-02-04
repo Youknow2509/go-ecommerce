@@ -2,7 +2,8 @@ package user
 
 import (
 	"github.com/Youknow2509/go-ecommerce/internal/controller/account"
-	"github.com/Youknow2509/go-ecommerce/internal/middlewares"	// "github.com/Youknow2509/go-ecommerce/internal/wire"
+	"github.com/Youknow2509/go-ecommerce/internal/middlewares" // "github.com/Youknow2509/go-ecommerce/internal/wire"
+	"github.com/Youknow2509/go-ecommerce/internal/wire"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,10 +25,10 @@ func (ur *UserRouter) InitUserRouter(Router *gin.RouterGroup) {
 	// }
 
 	// -> handle with wire go
-	// userController, _ := wire.InitUserRouterHandle()
+	userController, _ := wire.InitUserRouterHandle()
 	userRouterPublic := Router.Group("/user")
 	{
-		// userRouterPublic.POST("/register", userController.Register)
+		userRouterPublic.POST("/register_kafka", userController.Register) // TODO: todo remove
 		userRouterPublic.POST("/register", account.Login.Register)
 		userRouterPublic.POST("/login", account.Login.Login)
 		userRouterPublic.POST("/verify_account", account.Login.VerifyOTP)	
