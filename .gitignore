@@ -20,4 +20,3 @@ cmd/swag/docs/
 
 # volumes docker
 /environment/data/
-/environment/init/

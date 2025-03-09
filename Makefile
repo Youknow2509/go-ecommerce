@@ -30,6 +30,8 @@ GOOSE_PATH_QUERIES = sql/queries
 .PHONY: swag
 .PHONY: vegeta_benmark
 
+.ALL: help
+
 # Help Command
 help:
 	@echo "${GREEN_COLOR_BG}Usage: make [command]${RESET_COLOR}"
@@ -177,37 +179,37 @@ docker_build:
 # Docker Run
 docker_run:
 	@echo "${YELLOW_COLOR_BG}Running Docker containers${RESET_COLOR}"
-	docker compose -f ./environment/docker-compose.yml up -d
+	docker compose -f ./environment/docker-compose.yml -p go_ecommerce up  -d
 	@echo "${GREEN_COLOR_BG}Docker containers started${RESET_COLOR}"
 
 # Docker Stop
 docker_stop:
 	@echo "${YELLOW_COLOR_BG}Stopping Docker containers${RESET_COLOR}"
-	docker compose -f ./environment/docker-compose.yml down
+	docker compose -f ./environment/docker-compose.yml -p go_ecommerce down
 	@echo "${GREEN_COLOR_BG}Docker containers stopped${RESET_COLOR}"
 
 # Docker Stop with Volume Removal
 docker_stop_v:
 	@echo "${YELLOW_COLOR_BG}Stopping and removing Docker volumes${RESET_COLOR}"
-	docker compose down -f ./environment/docker-compose.yml --volumes --remove-orphans
+	docker compose down -f ./environment/docker-compose.yml -p go_ecommerce --volumes --remove-orphans
 	@echo "${GREEN_COLOR_BG}Docker containers and volumes removed${RESET_COLOR}"
 
 # Docker Run Monitoring
 docker_run_monitoring:
 	@echo "${YELLOW_COLOR_BG}Running Prometheus, Grafana, ... Docker containers${RESET_COLOR}"
-	docker compose -f ./environment/docker-compose-monitoring.yml up -d
+	docker compose -f ./environment/docker-compose-monitoring.yml -p go_ecommerce up -d
 	@echo "${GREEN_COLOR_BG}Docker containers started${RESET_COLOR}"
 
 # Docker Stop Monitoring
 docker_stop_monitoring:
 	@echo "${YELLOW_COLOR_BG}Stopping Prometheus, Grafana, ... Docker containers${RESET_COLOR}"
-	docker compose -f ./environment/docker-compose-monitoring.yml down
+	docker compose -f ./environment/docker-compose-monitoring.yml -p go_ecommerce down
 	@echo "${GREEN_COLOR_BG}Docker containers stopped${RESET_COLOR}"
 
 # Docker Stop Monitoring with Volume Removal
 docker_stop_monitoring_v:
 	@echo "${YELLOW_COLOR_BG}Stopping and removing Prometheus, Grafana, ... Docker containers${RESET_COLOR}"
-	docker compose -f ./environment/docker-compose-monitoring.yml down --volumes --remove-orphans
+	docker compose -f ./environment/docker-compose-monitoring.yml -p go_ecommerce down --volumes --remove-orphans
 	@echo "${GREEN_COLOR_BG}Docker containers and volumes removed${RESET_COLOR}"
 
 # MySQL Container Exec

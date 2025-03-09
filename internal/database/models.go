@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"fmt"
+	"time"
 )
 
 type PreGoAccUserTwoFactor9999TwoFactorAuthType string
@@ -172,4 +173,36 @@ type PreGoAccUserVerify9999 struct {
 	VerifyCreatedAt sql.NullTime
 	// Record update time
 	VerifyUpdatedAt sql.NullTime
+}
+
+// Table for ticket details
+type TicketItem struct {
+	// Primary key
+	ID int64
+	// Ticket title
+	Name string
+	// Ticket description
+	Description sql.NullString
+	// Initial stock quantity (e.g., 1000 tickets)
+	StockInitial int32
+	// Current available stock (e.g., 900 tickets)
+	StockAvailable int32
+	// Indicates if stock is pre-warmed (0/1)
+	IsStockPrepared bool
+	// Original ticket price
+	PriceOriginal int64
+	// Discounted price during flash sale
+	PriceFlash int64
+	// Flash sale start time
+	SaleStartTime time.Time
+	// Flash sale end time
+	SaleEndTime time.Time
+	// Ticket status (e.g., active/inactive)
+	Status int32
+	// ID of associated activity
+	ActivityID int64
+	// Timestamp of the last update
+	UpdatedAt time.Time
+	// Creation timestamp
+	CreatedAt time.Time
 }
