@@ -15,17 +15,20 @@
     + [sqlc](https://github.com/sqlc-dev/sqlc) - Fast generate code for SQL and handle ( gen model, exec query, ...)
     + [goose](https://github.com/pressly/goose) - Manage version of database - migration
     + [uuid google](https://github.com/google/uuid) - Google UUID for generate UUID
+    + [mongodb](https://github.com/mongodb/mongo-go-driver) - MongoDB driver for Go
 - Handle authentication:
 
 - Handle middleware:
-
+    + [limiter](https://github.com/ulule/limiter)
+  
 - Handle cache:
     + [redis](https://github.com/redis/go-redis)
 
 - Handle message queue:
     + [kafka](https://github.com/segmentio/kafka-go)
-      + [zookeeper](https://github.com/bitnami/containers)
+      + [zookeeper](https://github.com/bitnami/containers) - new config don't need zookeeper
       + [kafka-ui](https://github.com/provectus/kafka-ui)
+    + [rabbitmq](github.com/rabbitmq/amqp091-go)
 
 - Handle dependencies injection wiht [wire](https://github.com/google/wire)
 
