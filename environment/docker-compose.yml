@@ -1,14 +1,33 @@
-version: '3.9'
-
 networks:
   go-ecommerce-local-network:
     driver: bridge
 
 services:
+  # mongodb service
+  mongodb:
+    image: mongodb/mongodb-community-server:latest
+    container_name: mongodb_ecommerce_container
+    ports:
+      - "${MONGODB_PORT}:27017"
+    volumes:
+      - ./data/mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGODB_DBNAME}
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - go-ecommerce-local-network
+
   # My sql service
   mysql:
     image: mysql:8.0
-    container_name: mysql_v8_container
+    container_name: mysql_v8_ecommerce_container
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DBNAME}
@@ -18,7 +37,7 @@ services:
       - ./data/mysql_data:/var/lib/mysql
       - ./init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p$MYSQL_ROOT_PASSWORD"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p", "${MYSQL_PASSWORD}"]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -29,7 +48,7 @@ services:
   # MySQL Exporter (Prometheus metrics)
   mysql_exporter:
     image: prom/mysqld-exporter:latest
-    container_name: mysql_exporter_container
+    container_name: mysql_exporter_ecommerce_container
     ports:
       - "${MONITORING_MYSQL_EXPORTER_PORT}:9104"  # Exporter metrics port
     depends_on:
@@ -42,7 +61,7 @@ services:
   # Redis service
   redis:
     image: redis:7.0
-    container_name: redis_v7_container
+    container_name: redis_v7_ecommerce_container
     ports:
       - "${REDIS_PORT}:6379"
     volumes:
@@ -59,7 +78,7 @@ services:
   # redis/redisinsight service
   redisinsight:
     image: redis/redisinsight:latest
-    container_name: redisinsight_container
+    container_name: redisinsight_ecommerce_container
     ports:
       - "15540:5540"
     environment:
@@ -72,7 +91,7 @@ services:
   # redis metrics service
   redis-exporter:
     image: oliver006/redis_exporter:latest
-    container_name: redis-exporter
+    container_name: redis-ecommerce-exporter
     ports:
       - "${MONITORING_REDIS_EXPORTER_PORT}:9121"
     networks:
@@ -86,7 +105,7 @@ services:
   # Kafka service
   kafka-0:
     image: bitnami/kafka:3.5
-    container_name: kafka_container
+    container_name: kafka_ecommerce_container
     ports:
       - "${KAFAK_PORT_INTERNAL}:${KAFAK_PORT_INTERNAL}" # Internal listener
       - "${KAFAK_PORT_EXTERNAL}:${KAFAK_PORT_EXTERNAL}" # External listener - use in application
@@ -128,7 +147,7 @@ services:
   # Kafka UI (Optional)
   kafka_ui:
     image: provectuslabs/kafka-ui:latest
-    container_name: kafka_ui
+    container_name: kafka_ui_ecommerce
     ports:
       - "${KAFKA_UI_PORT}:8080"
     environment:
@@ -142,7 +161,7 @@ services:
   # Kafka exporter (use in prometheus)
   kafka_exporter:
     image: danielqsj/kafka-exporter:latest
-    container_name: kafka_exporter
+    container_name: kafka_exporter_ecommerce
     ports:
       - "${MONITORING_KAFKA_EXPORTER_PORT}:9308"
     command:

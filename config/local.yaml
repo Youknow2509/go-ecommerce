@@ -12,6 +12,16 @@ mysql:
   maxOpenConns: 100
   connMaxLifetime: 3600
 
+mongodb:
+  host: 127.0.0.1
+  port: 27017
+  username: root
+  password: root123
+  dbname: go_ecommerce
+  maxIdleConns: 10
+  maxOpenConns: 100
+  connMaxLifetime: 3600
+
 logger:
   level: debug
   file_log_name: "./storages/log/dev.001.log"
@@ -54,7 +64,7 @@ send_grid:
   api_key: "${send_grid_api_key}"
 
 rabbitmq:
-  url_rb_d: "${rabbitmq_url_rb_d}"
+  url_rb_d: ""
 
 jwt:
   token_hour_lifespan: 1
