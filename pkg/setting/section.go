@@ -11,6 +11,16 @@ type Config struct {
 	SendGrid SendGridSetting `mapstructure:"send_grid"`
 	RabbitMQ RabbitMQSetting `mapstructure:"rabbitmq"`
 	Jwt      JwtSetting      `mapstructure:"jwt"`
+	MongoDB  MongoDBSetting  `mapstructure:"mongodb"`
+}
+
+// mongo struct settings
+type MongoDBSetting struct {
+	Host     string `mapstructure:"host"`
+	Port     string `mapstructure:"port"`
+	Username string `mapstructure:"username"`
+	Password string `mapstructure:"password"`
+	Database string `mapstructure:"database"`
 }
 
 // rabbit mq struct settings

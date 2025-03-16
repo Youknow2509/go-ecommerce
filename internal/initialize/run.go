@@ -35,6 +35,10 @@ func Run() *gin.Engine {
 	InitMysqlC()
 	global.Logger.Info("MysqlC initialized")
 
+	// InitMongo
+	InitMongo()
+	global.Logger.Info("Mongo initialized")
+
 	// initialize service interface
 	InitServiceInterface()
 	global.Logger.Info("Service interface initialized")

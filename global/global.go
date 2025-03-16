@@ -5,11 +5,11 @@ import (
 
 	"github.com/Youknow2509/go-ecommerce/pkg/logger"
 	"github.com/Youknow2509/go-ecommerce/pkg/setting"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/redis/go-redis/v9"
 	"github.com/segmentio/kafka-go"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 	"gorm.io/gorm"
-	amqp "github.com/rabbitmq/amqp091-go"
-
 )
 
 var (
@@ -17,6 +17,7 @@ var (
 	Logger        *logger.LoggerZap
 	Mdb           *gorm.DB
 	Rdb           *redis.Client
+	MongoClient   *mongo.Client
 	Mdbc          *sql.DB
 	KafkaProducer *kafka.Writer
 	RabbitMQProducer_LOGGERDISCORD *amqp.Channel
