@@ -20,10 +20,10 @@ type ClothingRepo struct {
 // InsertProduct implements repo.IProductRepo.
 func (c *ClothingRepo) InsertProduct(r interface{}) error {
 	input := r.(model.ClothingProductRequest)
+	objID := primitive.NewObjectID()
 	// create schema input product
 	schema_product := model.ProductSchema{
-
-		Product_ID:          primitive.NewObjectID(),
+		Product_ID:          objID,
 		Product_Name:        input.Product.Product_Name,
 		Product_Thumb:       input.Product.Product_Thumb,
 		Product_Description: input.Product.Product_Description,
@@ -39,13 +39,13 @@ func (c *ClothingRepo) InsertProduct(r interface{}) error {
 	err := NewProductRepo(c.mongoClient).InsertProduct(schema_product)
 	if err != nil {
 		global.Logger.Error("Error inserting product", zap.Error(err))
-        return err
-    }
+		return err
+	}
 	// create schema clothing
 	schema_clothing := model.ClothingSchema{
-		ID: primitive.NewObjectID(),
-		Brand: input.Clothing.Brand,
-		Size: input.Clothing.Size,
+		ID:       objID,
+		Brand:    input.Clothing.Brand,
+		Size:     input.Clothing.Size,
 		Material: input.Clothing.Material,
 	}
 	res, err := c.GetCollectoin().InsertOne(

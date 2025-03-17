@@ -10,7 +10,7 @@ const (
 	DatabaseProduct      = "go_ecommerce"
 	ProductCollection    = "products"
 	ElectronicCollection = "electronics"
-	ClothingCollection   = "clothings"
+	ClothingCollection   = "clothes"
 )
 
 // enum Product_Type
