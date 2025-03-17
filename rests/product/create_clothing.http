@@ -1,0 +1,5 @@
+curl -X 'POST' \
+  'http://localhost:8082/v1/clothing/create' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{ "clothing": { "brand": "hm", "material": "clothing", "size": "xxl" }, "product": { "product_Description": "Áo cộc cotton siêu mát", "product_Name": "Áo cộc", "product_Price": 100, "product_Quantity": 5, "product_Shop": "67d83764c33878f892f2341f", "product_Thumb": "url..." } }'

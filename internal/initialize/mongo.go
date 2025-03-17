@@ -6,8 +6,8 @@ import (
 
 	"github.com/Youknow2509/go-ecommerce/global"
 	"github.com/Youknow2509/go-ecommerce/internal/model"
-	"go.mongodb.org/mongo-driver/v2/mongo"
-	"go.mongodb.org/mongo-driver/v2/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.uber.org/zap"
 )
 
@@ -33,7 +33,7 @@ func initMongoConnection() {
 		global.Config.MongoDB.Database,
 	)
     // establish connection with mongodb
-	c, err := mongo.Connect(options.Client().ApplyURI(strConnection))
+	c, err := mongo.Connect(context.Background(), options.Client().ApplyURI(strConnection))
 	if err != nil {
 		panic(err)
 	}

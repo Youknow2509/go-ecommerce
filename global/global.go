@@ -8,7 +8,7 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/redis/go-redis/v9"
 	"github.com/segmentio/kafka-go"
-	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/mongo"
 	"gorm.io/gorm"
 )
 

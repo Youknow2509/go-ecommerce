@@ -23,16 +23,6 @@ func NewUserController(
 	}
 }
 
-// Register user
-// @Summary      Register a new account - Use microservice handle to kafka
-// @Description  When user register, system will send OTP to user's phone number or email address
-// @Tags         accounts management
-// @Accept       json
-// @Produce      json
-// @Param        payload body vo.UserRegisterRequest true "payload"
-// @Success      200  {object}  response.ResponseData
-// @Failure      500  {object}  response.ErrResponseData
-// @Router       /v1/user/register [post]
 func (uc *UserController) Register(c *gin.Context) {
 	var params vo.UserRegisterRequest
 	if err := c.ShouldBindJSON(&params); err != nil {
