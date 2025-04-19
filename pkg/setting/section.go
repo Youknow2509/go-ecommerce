@@ -12,6 +12,13 @@ type Config struct {
 	RabbitMQ RabbitMQSetting `mapstructure:"rabbitmq"`
 	Jwt      JwtSetting      `mapstructure:"jwt"`
 	MongoDB  MongoDBSetting  `mapstructure:"mongodb"`
+	Kafka    KafkaSetting    `mapstructure:"kafka"`
+}
+
+// kafka struct settings
+type KafkaSetting struct {
+	TcpHost              string `mapstructure:"tcp_host"`
+	TopicServiceSendMail string `mapstructure:"topic_service_send_mail"`
 }
 
 // mongo struct settings
@@ -79,9 +86,9 @@ type JwtSetting struct {
 
 // Prometheus setting structure
 type PrometheusSetting struct {
-	RequestCount *prometheus.CounterVec
-	ErrorCount   *prometheus.CounterVec
-	RequestDuration *prometheus.HistogramVec
-	RequestSizeBytes *prometheus.HistogramVec
+	RequestCount      *prometheus.CounterVec
+	ErrorCount        *prometheus.CounterVec
+	RequestDuration   *prometheus.HistogramVec
+	RequestSizeBytes  *prometheus.HistogramVec
 	ResponseSizeBytes *prometheus.HistogramVec
 }

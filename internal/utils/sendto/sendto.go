@@ -8,6 +8,7 @@ const (
     TYPE_SMTP = "smtp"
 	TYPE_SENDGRID = "sendgrid"
 	TYPE_API = "api"
+	TYPE_KAFKA = "kafka"
 )
 
 // interface for sending email
@@ -25,7 +26,9 @@ type ISendTo interface {
 	
 	// Send api OTP email
 	SendAPIEmailOTP(to string, from string, otp string) error
-
+	
+	// Send kafka OTP email
+	SendKafkaEmailOTP(to string, from string, otp string) error 
 	// v.v
 }
 

@@ -70,7 +70,7 @@ func (s *sUserLogin) SetupTwoFactorAuth(ctx context.Context, in *model.SetupTwoF
 		return response.ErrCodeSuccess, errors.New("OTP exists but not registered")
 	}
 	otp := random.GenerateSixDigitOtp()
-	err = global.Rdb.Set(ctx, keyUserTwoFactor, otp, time.Duration(consts.TIME_OTP_REGISTER)*time.Minute).Err()
+	err = global.Rdb.Set(ctx, keyUserTwoFactor, otp, time.Duration(consts.TIME_OTP_REGISTER)*time.Hour).Err()
 	if err == redis.Nil {
 		global.Logger.Info("OTP not found err resid: nil")
 		global.Logger.Info(fmt.Sprint("OTP set: ", otp))
@@ -157,7 +157,7 @@ func (s *sUserLogin) Login(ctx context.Context, in *model.LoginInput) (codeResul
 		// generate otp
 		otpNew2FA := random.GenerateSixDigitOtp()
 		// save otp in cache redis
-		err = global.Rdb.Set(ctx, keyOTP2FA, otpNew2FA, time.Duration(consts.TIME_OTP_REGISTER)*time.Minute).Err()
+		err = global.Rdb.Set(ctx, keyOTP2FA, otpNew2FA, time.Duration(consts.TIME_OTP_REGISTER)*time.Hour).Err()
 		if err != nil {
 			return response.ErrCodeAuthFailed, out, err
 		}
@@ -187,7 +187,7 @@ func (s *sUserLogin) Login(ctx context.Context, in *model.LoginInput) (codeResul
 		return response.ErrCodeAuthFailed, out, fmt.Errorf("convert json failed: %w", err)
 	}
 	// give infoUserJson to redis with key = subToken
-	err = global.Rdb.Set(ctx, subToken, infoUserJson, time.Duration(consts.TIME_2FA_OTP_REGISTER)*time.Minute).Err()
+	err = global.Rdb.Set(ctx, subToken, infoUserJson, time.Duration(consts.TIME_2FA_OTP_REGISTER)*time.Hour).Err()
 	if err != nil {
 		return response.ErrCodeAuthFailed, out, fmt.Errorf("set redis failed: %w", err)
 	}
@@ -247,7 +247,7 @@ func (s *sUserLogin) Register(ctx context.Context, in *model.RegisterInput) (cod
 	fmt.Printf("New OTP is ::: %d\n", otpNew)
 
 	// 5. save otp in Redis with expiration time
-	timeExpire := time.Duration(consts.TIME_OTP_REGISTER) * time.Minute
+	timeExpire := time.Duration(consts.TIME_OTP_REGISTER) * time.Hour
 	err = global.Rdb.SetEx(ctx, userKey, strconv.Itoa(otpNew), timeExpire).Err()
 	if err != nil {
 		return response.ErrInvalidOTP, err
@@ -258,7 +258,7 @@ func (s *sUserLogin) Register(ctx context.Context, in *model.RegisterInput) (cod
 	case consts.EMAIL:
 		// send email
 		email := in.VerifyKey
-		err = create.FactoryCreateSendTo(sendto.TYPE_SENDGRID).SendTemplateEmailOTP([]string{email}, consts.EMAIL_HOST, "otp-auth.html", map[string]interface{}{"otp": strconv.Itoa(otpNew)})
+		err = create.FactoryCreateSendTo(sendto.TYPE_KAFKA).SendKafkaEmailOTP(email, consts.EMAIL_HOST, strconv.Itoa(otpNew))
 		if err != nil {
 			return response.ErrSendEmailOTP, err
 		}

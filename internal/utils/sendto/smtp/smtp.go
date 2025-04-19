@@ -23,6 +23,11 @@ const (
 type sendToWithSMTP struct {
 }
 
+// SendKafkaEmailOTP implements sendto.ISendTo.
+func (s *sendToWithSMTP) SendKafkaEmailOTP(to string, from string, otp string) error {
+	panic("unimplemented")
+}
+
 // implement interface ISendTo to new struct sendToWithSMTP
 func NewSendToWithSMTP() sendto.ISendTo {
 	return &sendToWithSMTP{}

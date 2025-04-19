@@ -76,7 +76,7 @@ func (cU *cUserLogin) Register(c *gin.Context) {
 // @Tags         accounts management
 // @Accept       json
 // @Produce      json
-// @Param        payload body model.RegisterInput true "payload"
+// @Param        payload body model.VerifyInput true "payload"
 // @Success      200  {object}  response.ResponseData
 // @Failure      500  {object}  response.ErrResponseData
 // @Router       /v1/user/verify_account [post]

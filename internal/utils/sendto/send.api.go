@@ -13,6 +13,11 @@ import (
 type sendToWithApi struct {
 }
 
+// SendKafkaEmailOTP implements ISendTo.
+func (s *sendToWithApi) SendKafkaEmailOTP(to string, from string, otp string) error {
+	panic("unimplemented")
+}
+
 // SendAPIEmailOTP implements ISendTo.
 func (s *sendToWithApi) SendAPIEmailOTP(to string, from string, otp string) error {
 	// url api endpoint
