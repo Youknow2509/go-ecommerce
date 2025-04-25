@@ -20,3 +20,5 @@ cmd/swag/docs/
 
 # volumes docker
 /environment/data/
+/environment/redis-cluster/data/
+
