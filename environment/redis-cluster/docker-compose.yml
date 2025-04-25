@@ -1,0 +1,164 @@
+
+# redis-cluster
+services:
+  # redis master 
+  redis-master:
+    image: redis:7.0
+    container_name: redis-master-go-ecommerce
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-mater/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./data/redis-master-data:/data
+    command: redis-server /usr/local/etc/redis/redis.conf
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      - TZ=UTC
+    networks:
+      - redis-network-cluster
+  
+  # redis replica 1
+  redis-replica-1:
+    image: redis:7.0
+    container_name: redis-replica-1-go-ecommerce
+    volumes:
+      - ./redis-replica/redis-replica-1.conf:/usr/local/etc/redis/redis.conf
+      - ./data/redis-replica-1-data:/data
+    ports:
+      - "6380:6379"
+    command: redis-server /usr/local/etc/redis/redis.conf
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping", "|", "grep", "PONG"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      - TZ=UTC
+    depends_on:
+      - redis-master
+    networks:
+      - redis-network-cluster
+
+  # redis replica 2
+  redis-replica-2:
+    image: redis:7.0
+    container_name: redis-replica-2-go-ecommerce
+    volumes:
+      - ./redis-replica/redis-replica-2.conf:/usr/local/etc/redis/redis.conf
+      - ./data/redis-replica-2-data:/data
+    ports:
+      - "6381:6379"
+    command: redis-server /usr/local/etc/redis/redis.conf
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping", "|", "grep", "PONG"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      - TZ=UTC
+    depends_on:
+      - redis-master
+    networks:
+      - redis-network-cluster
+
+  # redis replica 3
+  redis-replica-3:
+    image: redis:7.0
+    container_name: redis-replica-3-go-ecommerce
+    volumes:
+      - ./redis-replica/redis-replica-3.conf:/usr/local/etc/redis/redis.conf
+      - ./data/redis-replica-3-data:/data
+    ports:
+      - "6382:6379"
+    command: redis-server /usr/local/etc/redis/redis.conf
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping", "|", "grep", "PONG"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      - TZ=UTC
+    depends_on:
+      - redis-master
+    networks:
+      - redis-network-cluster
+
+  # Redis sentinel 1
+  redis-sentinel-1:
+    image: redis:7.0
+    container_name: redis-sentinel-1-go-ecommerce
+    ports:
+      - "26379:26379"
+    volumes:
+      - ./redis-sentinel/sentinel-1.conf:/usr/local/etc/redis/sentinel.conf
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+    healthcheck:
+      test: ["CMD", "redis-cli", "-p", "26379", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      - TZ=UTC
+    depends_on:
+      - redis-master
+      - redis-replica-1
+      - redis-replica-2
+      - redis-replica-3
+    networks:
+      - redis-network-cluster
+  
+  # Redis sentinel 2
+  redis-sentinel-2:
+    image: redis:7.0
+    container_name: redis-sentinel-2-go-ecommerce
+    ports:
+      - "26380:26379"
+    volumes:
+      - ./redis-sentinel/sentinel-2.conf:/usr/local/etc/redis/sentinel.conf
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+    healthcheck:
+      test: ["CMD", "redis-cli", "-p", "26380", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      - TZ=UTC
+    depends_on:
+      - redis-master
+      - redis-replica-1
+      - redis-replica-2
+      - redis-replica-3
+    networks:
+      - redis-network-cluster
+
+  # Redis sentinel 3
+  redis-sentinel-3:
+    image: redis:7.0
+    container_name: redis-sentinel-3-go-ecommerce
+    ports:
+      - "26381:26379"
+    volumes:
+      - ./redis-sentinel/sentinel-3.conf:/usr/local/etc/redis/sentinel.conf
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+    healthcheck:
+      test: ["CMD", "redis-cli", "-p", "26381", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      - TZ=UTC
+    depends_on:
+      - redis-master
+      - redis-replica-1
+      - redis-replica-2
+      - redis-replica-3
+    networks:
+      - redis-network-cluster
+  
+networks:
+  redis-network-cluster:
+    driver: bridge

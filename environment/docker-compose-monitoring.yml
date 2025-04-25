@@ -30,6 +30,7 @@ services:
       - monitoring-network-local
     volumes:
       - ./data/grafana_data/:/var/lib/grafana
+      - ../config/grafana.ini:/etc/grafana/grafana.ini
     depends_on:
       - prometheus
   
