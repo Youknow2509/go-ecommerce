@@ -14,11 +14,34 @@ scrape_configs:
       - targets:
           - "host.docker.internal:9104" # MySQL Exporter
 
-  - job_name: "go-ecommerce-redis"
-    scrape_interval: 5s
+  # - job_name: "go-ecommerce-redis"
+  #   scrape_interval: 5s
+  #   static_configs:
+  #     - targets:
+  #         - "host.docker.internal:9121" # Redis Exporter
+
+  ## config for the multiple Redis targets that the exporter will scrape
+  - job_name: 'redis_exporter_targets'
     static_configs:
       - targets:
-          - "host.docker.internal:9121" # Redis Exporter
+        - redis://redis-master-go-ecommerce:6379
+        - redis://redis-replica-1-go-ecommerce:6379
+        - redis://redis-replica-2-go-ecommerce:6379
+        - redis://redis-replica-3-go-ecommerce:6379
+    metrics_path: /scrape
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: "host.docker.internal:9121"
+
+  ## config for scraping the exporter itself
+  - job_name: 'go-ecommerce-redis'
+    static_configs:
+      - targets:
+        - "host.docker.internal:9121"
 
   - job_name: "go-ecommerce-prometheus"
     scrape_interval: 5s

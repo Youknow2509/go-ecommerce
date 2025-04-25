@@ -1,4 +1,3 @@
-
 # redis-cluster
 services:
   # redis master 
@@ -12,7 +11,7 @@ services:
       - ./data/redis-master-data:/data
     command: redis-server /usr/local/etc/redis/redis.conf
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -20,7 +19,7 @@ services:
       - TZ=UTC
     networks:
       - redis-network-cluster
-  
+
   # redis replica 1
   redis-replica-1:
     image: redis:7.0
@@ -32,7 +31,7 @@ services:
       - "6380:6379"
     command: redis-server /usr/local/etc/redis/redis.conf
     healthcheck:
-      test: ["CMD", "redis-cli", "ping", "|", "grep", "PONG"]
+      test: [ "CMD", "redis-cli", "ping", "|", "grep", "PONG" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -54,7 +53,7 @@ services:
       - "6381:6379"
     command: redis-server /usr/local/etc/redis/redis.conf
     healthcheck:
-      test: ["CMD", "redis-cli", "ping", "|", "grep", "PONG"]
+      test: [ "CMD", "redis-cli", "ping", "|", "grep", "PONG" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -76,7 +75,7 @@ services:
       - "6382:6379"
     command: redis-server /usr/local/etc/redis/redis.conf
     healthcheck:
-      test: ["CMD", "redis-cli", "ping", "|", "grep", "PONG"]
+      test: [ "CMD", "redis-cli", "ping", "|", "grep", "PONG" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -97,7 +96,7 @@ services:
       - ./redis-sentinel/sentinel-1.conf:/usr/local/etc/redis/sentinel.conf
     command: redis-sentinel /usr/local/etc/redis/sentinel.conf
     healthcheck:
-      test: ["CMD", "redis-cli", "-p", "26379", "ping"]
+      test: [ "CMD", "redis-cli", "-p", "26379", "ping" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -110,7 +109,7 @@ services:
       - redis-replica-3
     networks:
       - redis-network-cluster
-  
+
   # Redis sentinel 2
   redis-sentinel-2:
     image: redis:7.0
@@ -121,7 +120,7 @@ services:
       - ./redis-sentinel/sentinel-2.conf:/usr/local/etc/redis/sentinel.conf
     command: redis-sentinel /usr/local/etc/redis/sentinel.conf
     healthcheck:
-      test: ["CMD", "redis-cli", "-p", "26380", "ping"]
+      test: [ "CMD", "redis-cli", "-p", "26380", "ping" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -145,7 +144,7 @@ services:
       - ./redis-sentinel/sentinel-3.conf:/usr/local/etc/redis/sentinel.conf
     command: redis-sentinel /usr/local/etc/redis/sentinel.conf
     healthcheck:
-      test: ["CMD", "redis-cli", "-p", "26381", "ping"]
+      test: [ "CMD", "redis-cli", "-p", "26381", "ping" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -158,7 +157,41 @@ services:
       - redis-replica-3
     networks:
       - redis-network-cluster
-  
+
+  # Redis exporter
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: redis-exporter-go-ecommerce
+    ports:
+      - "9121:9121"
+    environment:
+      - TZ=UTC
+      - RE
+    depends_on:
+      - redis-master
+      - redis-replica-1
+      - redis-replica-2
+      - redis-replica-3
+    networks:
+      - redis-network-cluster
+
+  # Redis Insight
+  redis-insight:
+    image: redis/redisinsight:latest
+    container_name: redis-insight-go-ecommerce
+    ports:
+      - "15540:5540"
+    environment:
+      - TZ=UTC
+      - REDIS_ADDR=redis-master-go-ecommerce:6379
+    depends_on:
+      - redis-master
+      - redis-replica-1
+      - redis-replica-2
+      - redis-replica-3
+    networks:
+      - redis-network-cluster
+
 networks:
   redis-network-cluster:
     driver: bridge

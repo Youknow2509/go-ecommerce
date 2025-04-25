@@ -59,48 +59,48 @@ services:
       - go-ecommerce-local-network
 
   # Redis service
-  redis:
-    image: redis:7.0
-    container_name: redis_v7_ecommerce_container
-    ports:
-      - "${REDIS_PORT}:6379"
-    volumes:
-      - ./data/redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-    networks:
-      - go-ecommerce-local-network
+  # redis:
+  #   image: redis:7.0
+  #   container_name: redis_v7_ecommerce_container
+  #   ports:
+  #     - "${REDIS_PORT}:6379"
+  #   volumes:
+  #     - ./data/redis_data:/data
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 30s
+  #   networks:
+  #     - go-ecommerce-local-network
   
   # redis/redisinsight service
-  redisinsight:
-    image: redis/redisinsight:latest
-    container_name: redisinsight_ecommerce_container
-    ports:
-      - "15540:5540"
-    environment:
-      - REDIS_HOSTS=redis:6379
-    depends_on:
-      - redis
-    networks:
-      - go-ecommerce-local-network
+  # redisinsight:
+  #   image: redis/redisinsight:latest
+  #   container_name: redisinsight_ecommerce_container
+  #   ports:
+  #     - "15540:5540"
+  #   environment:
+  #     - REDIS_HOSTS=redis:6379
+  #   depends_on:
+  #     - redis
+  #   networks:
+  #     - go-ecommerce-local-network
 
   # redis metrics service
-  redis-exporter:
-    image: oliver006/redis_exporter:latest
-    container_name: redis-ecommerce-exporter
-    ports:
-      - "${MONITORING_REDIS_EXPORTER_PORT}:9121"
-    networks:
-      - go-ecommerce-local-network
-    command:
-      - "--redis.addr=redis://redis:6379"
+  # redis-exporter:
+  #   image: oliver006/redis_exporter:latest
+  #   container_name: redis-ecommerce-exporter
+  #   ports:
+  #     - "${MONITORING_REDIS_EXPORTER_PORT}:9121"
+  #   networks:
+  #     - go-ecommerce-local-network
+  #   command:
+  #     - "--redis.addr=redis://redis:6379"
 
-    depends_on:
-      - redis
+    # depends_on:
+    #   - redis
 
   # Kafka service
   kafka-0:
