@@ -44,8 +44,12 @@ func Run() *gin.Engine {
 	global.Logger.Info("Service interface initialized")
 
 	// connect to redis
-	InitRedis()
-	global.Logger.Info("Redis initialized")
+	// InitRedis()
+	// global.Logger.Info("Redis initialized")
+
+	// connect to redis sentinel
+	InitRedisSentinel()
+	global.Logger.Info("Redis sentinel initialized")
 
 	// connect to kafka
 	InitKafka()

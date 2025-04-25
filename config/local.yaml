@@ -36,6 +36,11 @@ redis:
     password:
     db: 0
     pool_size: 10
+    master_name: mymaster
+    sentinel_addrs:
+        - 127.0.0.1:26379
+        - 127.0.0.1:26380
+        - 127.0.0.1:26381
 
 zookeeper:
     host: 127.0.0.1

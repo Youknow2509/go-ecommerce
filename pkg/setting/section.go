@@ -42,11 +42,13 @@ type SendGridSetting struct {
 
 // Redis Struct
 type RedisSetting struct {
-	Host     string `mapstructure:"host"`
-	Port     int    `mapstructure:"port"`
-	Password string `mapstructure:"password"`
-	Database int    `mapstructure:"db"`
-	PoolSize int    `mapstructure:"pool_size"`
+	Host          string   `mapstructure:"host"`
+	Port          int      `mapstructure:"port"`
+	Password      string   `mapstructure:"password"`
+	Database      int      `mapstructure:"db"`
+	PoolSize      int      `mapstructure:"pool_size"`
+	MasterName    string   `mapstructure:"master_name"`
+	SentinelAddrs []string `mapstructure:"sentinel_addrs"`
 }
 
 // Server Struct
