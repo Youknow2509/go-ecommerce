@@ -24,7 +24,7 @@ GOOSE_PATH_QUERIES = sql/queries
 # Phony Targets
 .PHONY: help
 .PHONY: install_path_pkg run_server wire regenerate_wire clear_log cre_env deps build test coverage
-.PHONY: docker_build docker_run docker_stop docker_stop_v docker_run_monitoring docker_stop_monitoring docker_stop_monitoring_v
+.PHONY: docker_run_redis_cluster docker_build docker_run docker_stop docker_stop_v docker_run_monitoring docker_stop_monitoring docker_stop_monitoring_v
 .PHONY: exec_mysql mysql_dump exec_redis exec_kafka_ui
 .PHONY: goose_create goose_up goose_down goose_status goose_fix goose_redo goose_reset goose_clean goose_up_by_one
 .PHONY: swag
@@ -54,6 +54,8 @@ help:
 	@echo "\t ${YELLOW_COLOR_BG}docker_run_monitoring${RESET_COLOR} \t Run Prometheus, Graphana, ... Docker container"
 	@echo "\t ${YELLOW_COLOR_BG}docker_stop_monitoring${RESET_COLOR} \t Stop Prometheus, Graphana, ... Docker container"
 	@echo "\t ${YELLOW_COLOR_BG}docker_stop_monitoring_v${RESET_COLOR} \t Stop and remove Prometheus, Graphana, ... Docker container"
+	@echo "\t ${YELLOW_COLOR_BG}docker_run_redis_cluster${RESET_COLOR} \t Run Redis Cluster"
+
 	@echo "\nContainer Exec Commands:"
 	@echo "\t ${YELLOW_COLOR_BG}exec_mysql${RESET_COLOR} \t Execute MySQL CLI"
 	@echo "\t ${YELLOW_COLOR_BG}mysql_dump${RESET_COLOR} \t Render SQL file in database"
@@ -75,7 +77,12 @@ help:
 	@echo "\t ${YELLOW_COLOR_BG}swag${RESET_COLOR} \t Handle swagger"
 	@echo "\nVegeta attack benmark Commands:"
 	@echo "\t ${YELLOW_COLOR_BG}vegeta_benmark${RESET_COLOR} \t Run vegeta attack benmark"
-	
+
+# Docker Run Redis Cluster
+docker_run_redis_cluster:
+	@echo "${YELLOW_COLOR_BG}Running Redis Cluster${RESET_COLOR}"
+	docker compose -f ./environment/redis-cluster/docker-compose.yml -p redis-cluster-go-ecommerce up -d
+	@echo "${GREEN_COLOR_BG}Redis Cluster started${RESET_COLOR}"
 
 # SQLC - Generate
 sqlc_generate:

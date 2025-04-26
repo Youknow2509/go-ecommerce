@@ -20,5 +20,6 @@ cmd/swag/docs/
 
 # volumes docker
 /environment/data/
+!/environment/data/grafana_data/
 /environment/redis-cluster/data/
 
