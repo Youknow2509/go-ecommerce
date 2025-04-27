@@ -11,3 +11,21 @@ type IRedisCache interface {
 	Decr(ctx context.Context, key string) (int64, error)
 	Exists(ctx context.Context, key string) (bool, error)
 }
+
+var vRedisCache IRedisCache
+
+// Init singleton
+func InitRedisCache(redis IRedisCache) {
+	if vRedisCache != nil {
+		panic("redis cache already initialized")
+	}
+	vRedisCache = redis
+}
+
+// GetRedisCache get redis cache
+func GetRedisCache() IRedisCache {
+	if vRedisCache == nil {
+		panic("redis cache not initialized")
+	}
+	return vRedisCache
+}

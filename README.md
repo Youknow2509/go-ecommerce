@@ -23,6 +23,7 @@
   
 - Handle cache:
     + [redis](https://github.com/redis/go-redis)
+    + [local cache](https://github.com/hypermodeinc/ristretto)
 
 - Handle message queue:
     + [kafka](https://github.com/segmentio/kafka-go)
