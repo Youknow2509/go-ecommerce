@@ -49,7 +49,7 @@ func (r *RestrettoCache) Set(ctx context.Context, key string, value interface{})
 func (r *RestrettoCache) SetWithTTL(ctx context.Context, key string, value interface{}) bool {
 	timeTTL := time.Minute * time.Duration(consts.TIME_TTL_LOCAL_CACHE)
 	jsonData, _ := json.Marshal(value)
-	return r.cache.Set(key, string(jsonData), int64(timeTTL.Minutes()))
+	return r.cache.SetWithTTL(key, string(jsonData), 1, timeTTL)
 }
 
 // new restretto cache
