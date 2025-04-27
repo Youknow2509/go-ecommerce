@@ -25,9 +25,9 @@ func InitRouter() *gin.Engine {
 	router.Use() // logger
 	router.Use() // cross
 	// middlewares limiter 
-	router.Use(middlewares.NewRateLimiter().GlobalLimiter())
-	router.Use(middlewares.NewRateLimiter().PublicAPILimiter())
-	router.Use(middlewares.NewRateLimiter().UserPrivateAPILimiter())
+	// router.Use(middlewares.NewRateLimiter().GlobalLimiter())
+	// router.Use(middlewares.NewRateLimiter().PublicAPILimiter())
+	// router.Use(middlewares.NewRateLimiter().UserPrivateAPILimiter())
 	// middlewares prometheus
 	router.Use(middlewares.PrometheusMiddleware())
 

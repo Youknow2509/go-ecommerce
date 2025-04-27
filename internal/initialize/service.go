@@ -9,8 +9,16 @@ import (
 
 // initialize services
 func InitServiceInterface() {
+	// initialize database mysql
 	q := database.New(global.Mdbc)
+	// initialize local cache
+	restrettoCache := impl.NewRestrettoCache()
+	service.InitLocalCache(restrettoCache)
+
     service.InitUserLogin(impl.NewSUserLogin(q))
-	service.InitTicketItem(impl.NewTicketItemImpl(q))
-	// ...
+	service.InitTicketItem(impl.NewTicketItemImpl(
+		q,
+		service.GetLocalCache(),
+	))
+	// additional service initializations can be added here
 }
