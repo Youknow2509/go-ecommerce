@@ -47,14 +47,14 @@ func SetCache(
 	distributedCache service.IRedisCache,
 	localCache service.ILocalCache,
 ) (res string, ok bool) {
-	// timeTtl := time.Duration(ttl) * time.Second
+	timeTtl := ttl * 60 // convert minute to second
 	jsonData, _ := json.Marshal(data)
 	if distributedCache != nil {
 		err := distributedCache.Set(
 			ctx, 
 			key, 
 			string(jsonData), 
-			int(ttl),
+			int(timeTtl),
 		)
 		if err != nil {
 			return fmt.Sprintf("error setting distributed cache: %v", err), false

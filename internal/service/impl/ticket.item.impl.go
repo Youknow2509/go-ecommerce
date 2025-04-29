@@ -17,14 +17,16 @@ import (
 
 type sTicketItem struct {
 	// implementation interface here
-	r          *database.Queries
-	localCache service.ILocalCache
+	r                *database.Queries
+	localCache       service.ILocalCache
+	distributedCache service.IRedisCache
 }
 
-func NewTicketItemImpl(r *database.Queries, localCache service.ILocalCache) *sTicketItem {
+func NewTicketItemImpl(r *database.Queries, localCache service.ILocalCache, distributedCache service.IRedisCache) *sTicketItem {
 	return &sTicketItem{
-		r:          r,
-		localCache: localCache,
+		r:                r,
+		localCache:       localCache,
+		distributedCache: distributedCache,
 	}
 }
 
@@ -40,7 +42,7 @@ func (s *sTicketItem) GetTicketItemById(ctx context.Context, ticketId int) (out 
 		if err != nil {
 			return nil, err
 		}
-		global.Logger.Info("get data from local cache: %s", zap.String("data", localData.(string)))
+		// global.Logger.Info("get data from local cache: %s", zap.String("data", localData.(string)))
 		return &ticketItem, nil
 	}
 	// get in distributed cache
@@ -62,11 +64,64 @@ func (s *sTicketItem) GetTicketItemById(ctx context.Context, ticketId int) (out 
 		if err != nil {
 			return nil, err
 		}
-		global.Logger.Info("get data from distributed cache: %s", zap.String("data", data))
+		// global.Logger.Info("get data from distributed cache: %s", zap.String("data", data))
 		return &ticketItem, nil
 	}
 
-	// get data dfrom database
+	// ctxx := context.Background()
+	// dataOut, err := s.getTicketItemByIdFromDB(ctxx, ticketId)
+	dataOut, err := s.getTicketItemByLock(ctx, ticketId)
+	if err != nil {
+		global.Logger.Error("get lock failed", zap.Error(err))
+		return nil, err
+	}
+	return dataOut, nil
+}
+
+// get ticket from lock database
+func (s *sTicketItem) getTicketItemByLock(ctx context.Context, ticketId int) (out *model.TicketItemsOutput, err error) {
+	lockKey := fmt.Sprintf("lock_ticket_item_%d", ticketId)
+	cacheKey := fmt.Sprintf("ticket_item_%d", ticketId)
+	// lock
+	err = s.distributedCache.WithDistributedLock(ctx, lockKey, 5, func(ctx context.Context) error {
+		global.Logger.Info("get data from database")
+		// get data from database
+		ticketItem, err := s.r.GetTicketItemById(ctx, int64(ticketId))
+		if err != nil {
+			return err
+		}
+
+		// set data to cache
+		res, ok := cache.SetCache(
+			ctx,
+			cacheKey,
+			ticketItem,
+			(int64)(consts.TIME_TTL_LOCAL_CACHE),
+			service.GetRedisCache(),
+			s.localCache,
+		)
+		if !ok {
+			return fmt.Errorf("set cache failed - %s", res)
+		}
+		// write data to out
+		out = &model.TicketItemsOutput{
+			TicketId:       int(ticketItem.ID),
+			TicketName:     ticketItem.Name,
+			StockAvailable: int(ticketItem.StockAvailable),
+			StockInitial:   int(ticketItem.StockInitial),
+		}
+		return nil
+	})
+
+	return
+}
+
+// get data from database
+func (s *sTicketItem) getTicketItemByIdFromDB(ctx context.Context, ticketId int) (out *model.TicketItemsOutput, err error) {
+	cacheKey := fmt.Sprintf("ticket_item_%d", ticketId)
+	//
+	global.Logger.Info("get data from database")
+	// get data from database
 	ticketItem, err := s.r.GetTicketItemById(ctx, int64(ticketId))
 	if err != nil {
 		return out, err
@@ -83,12 +138,12 @@ func (s *sTicketItem) GetTicketItemById(ctx context.Context, ticketId int) (out 
 	if !ok {
 		return nil, fmt.Errorf("set local cache failed - %s", res)
 	}
-	
-	global.Logger.Info("get data from db: %s", zap.String("data", fmt.Sprintf("%+v", ticketItem)))
-	return &model.TicketItemsOutput{
+	// write data to out
+	out = &model.TicketItemsOutput{
 		TicketId:       int(ticketItem.ID),
 		TicketName:     ticketItem.Name,
 		StockAvailable: int(ticketItem.StockAvailable),
 		StockInitial:   int(ticketItem.StockInitial),
-	}, nil
+	}
+	return out, nil
 }

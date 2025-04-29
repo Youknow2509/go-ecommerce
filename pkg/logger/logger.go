@@ -65,16 +65,16 @@ func NewLogger(configLogger setting.LoggerSetting) *LoggerZap {
 		Compress:   configLogger.Compress,   // Whether to compress old files
 	}
 
-    hook_rb := &RabbitMQLogger{
-        producer: rabbitmq.NewRabbitMQWriter(ChannelRabbitMq),
-    }
+    // hook_rb := &RabbitMQLogger{
+    //     producer: rabbitmq.NewRabbitMQWriter(ChannelRabbitMq),
+    // }
 
 	core := zapcore.NewCore(
 		encoder,
 		zapcore.NewMultiWriteSyncer(
 			zapcore.AddSync(os.Stdout),
 			zapcore.AddSync(&hook),
-            zapcore.AddSync(hook_rb),
+            // zapcore.AddSync(hook_rb),
 		),
 		level)
 

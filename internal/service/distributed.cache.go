@@ -10,6 +10,7 @@ type IRedisCache interface {
 	Incr(ctx context.Context, key string) (int64, error)
 	Decr(ctx context.Context, key string) (int64, error)
 	Exists(ctx context.Context, key string) (bool, error)
+	WithDistributedLock(ctx context.Context, key string, expirationSeconds int, fn func(ctx context.Context) error) error
 }
 
 var vRedisCache IRedisCache

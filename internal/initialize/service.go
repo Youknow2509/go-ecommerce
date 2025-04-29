@@ -22,6 +22,7 @@ func InitServiceInterface() {
 	service.InitTicketItem(impl.NewTicketItemImpl(
 		q,
 		service.GetLocalCache(),
+		service.GetRedisCache(),
 	))
 	// additional service initializations can be added here
 }

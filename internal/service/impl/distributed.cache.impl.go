@@ -2,15 +2,41 @@ package impl
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/Youknow2509/go-ecommerce/internal/service"
+	"github.com/bsm/redislock"
 	"github.com/redis/go-redis/v9"
 )
 
 // struct redis cache
 type sRedisCache struct {
 	client *redis.Client
+	locker *redislock.Client
+}
+
+// WithDistributedLock implements service.IRedisCache.
+func (s *sRedisCache) WithDistributedLock(ctx context.Context, key string, expirationSeconds int, fn func(ctx context.Context) error) error {
+	timeTll := time.Second * time.Duration(expirationSeconds)
+	// linearBackoff time
+	// linearBackoff := redislock.LinearBackoff(500 * time.Millisecond)
+	lock, err := s.locker.Obtain(
+		ctx,
+		key,
+		timeTll,
+		&redislock.Options{
+			// RetryStrategy: linearBackoff,
+		},
+	)
+	if err == redislock.ErrNotObtained {
+		return fmt.Errorf("could not obtain lock for key: %s", key)
+	} else if err != nil {
+		return fmt.Errorf("failed to obtain lock: %w", err)
+	}
+	defer lock.Release(ctx)
+
+	return fn(ctx)
 }
 
 // Decr implements service.IRedisCache.
@@ -78,5 +104,6 @@ func (s *sRedisCache) Set(ctx context.Context, key string, value interface{}, ex
 func NewRedisCache(client *redis.Client) service.IRedisCache {
 	return &sRedisCache{
 		client: client,
+		locker: redislock.New(client),
 	}
 }
