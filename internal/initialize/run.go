@@ -39,10 +39,6 @@ func Run() *gin.Engine {
 	InitMongo()
 	global.Logger.Info("Mongo initialized")
 
-	// initialize service interface
-	InitServiceInterface()
-	global.Logger.Info("Service interface initialized")
-
 	// connect to redis
 	// InitRedis()
 	InitRedisSentinel()
@@ -51,6 +47,10 @@ func Run() *gin.Engine {
 	// connect to kafka
 	InitKafka()
 	global.Logger.Info("Kafka initialized")
+
+	// initialize service interface
+	InitServiceInterface()
+	global.Logger.Info("Service interface initialized")
 
 	// connect to Router
 	r := InitRouter()

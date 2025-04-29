@@ -14,7 +14,10 @@ func InitServiceInterface() {
 	// initialize local cache
 	restrettoCache := impl.NewRestrettoCache()
 	service.InitLocalCache(restrettoCache)
-
+	// initialize distributed cache
+	redisCache := impl.NewRedisCache(global.Rdb)
+	service.InitRedisCache(redisCache)
+	//
     service.InitUserLogin(impl.NewSUserLogin(q))
 	service.InitTicketItem(impl.NewTicketItemImpl(
 		q,

@@ -4,14 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"time"
 
 	"github.com/Youknow2509/go-ecommerce/global"
 	"github.com/Youknow2509/go-ecommerce/internal/consts"
 	"github.com/Youknow2509/go-ecommerce/internal/database"
 	"github.com/Youknow2509/go-ecommerce/internal/model"
 	"github.com/Youknow2509/go-ecommerce/internal/service"
+	"github.com/Youknow2509/go-ecommerce/internal/utils/cache"
 	"github.com/redis/go-redis/v9"
+	"go.uber.org/zap"
 )
 
 type sTicketItem struct {
@@ -39,6 +40,7 @@ func (s *sTicketItem) GetTicketItemById(ctx context.Context, ticketId int) (out 
 		if err != nil {
 			return nil, err
 		}
+		global.Logger.Info("get data from local cache: %s", zap.String("data", localData.(string)))
 		return &ticketItem, nil
 	}
 	// get in distributed cache
@@ -49,12 +51,18 @@ func (s *sTicketItem) GetTicketItemById(ctx context.Context, ticketId int) (out 
 		}
 	}
 	if data != "" {
+		// set data to local cache
+		ok = s.localCache.SetWithTTL(ctx, cacheKey, data)
+		if !ok {
+			return nil, fmt.Errorf("set local cache failed")
+		}
 		// unmarshal data
 		var ticketItem model.TicketItemsOutput
 		err = json.Unmarshal([]byte(data), &ticketItem)
 		if err != nil {
 			return nil, err
 		}
+		global.Logger.Info("get data from distributed cache: %s", zap.String("data", data))
 		return &ticketItem, nil
 	}
 
@@ -64,20 +72,19 @@ func (s *sTicketItem) GetTicketItemById(ctx context.Context, ticketId int) (out 
 		return out, err
 	}
 
-	// set data to distributed cache
-	jsonData, _ := json.Marshal(ticketItem)
-	timeTTl := time.Duration(consts.TIME_TTL_LOCAL_CACHE) * time.Minute
-	err = global.Rdb.Set(ctx, cacheKey, jsonData, timeTTl).Err()
-	if err != nil {
-		return nil, err
-	}
-
-	// set data to local cache
-	ok = s.localCache.SetWithTTL(ctx, cacheKey, jsonData)
+	res, ok := cache.SetCache(
+		ctx,
+		cacheKey,
+		ticketItem,
+		(int64)(consts.TIME_TTL_LOCAL_CACHE),
+		service.GetRedisCache(),
+		s.localCache,
+	)
 	if !ok {
-		return nil, fmt.Errorf("set local cache failed")
+		return nil, fmt.Errorf("set local cache failed - %s", res)
 	}
-
+	
+	global.Logger.Info("get data from db: %s", zap.String("data", fmt.Sprintf("%+v", ticketItem)))
 	return &model.TicketItemsOutput{
 		TicketId:       int(ticketItem.ID),
 		TicketName:     ticketItem.Name,
