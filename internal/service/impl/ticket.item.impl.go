@@ -30,9 +30,15 @@ func NewTicketItemImpl(r *database.Queries, localCache service.ILocalCache, dist
 	}
 }
 
+// var mu sync.Mutex
+
 func (s *sTicketItem) GetTicketItemById(ctx context.Context, ticketId int) (out *model.TicketItemsOutput, err error) {
 	fmt.Println("CAL service GetTicketItemById...")
 	cacheKey := fmt.Sprintf("ticket_item_%d", ticketId)
+	
+	// mu.Lock()
+	// defer mu.Unlock()
+
 	// get in local cache
 	localData, ok := s.localCache.Get(ctx, cacheKey)
 	if ok {
@@ -69,7 +75,7 @@ func (s *sTicketItem) GetTicketItemById(ctx context.Context, ticketId int) (out 
 	}
 
 	// ctxx := context.Background()
-	// dataOut, err := s.getTicketItemByIdFromDB(ctxx, ticketId)
+	// dataOut, err := s.getTicketItemByIdFromDB(ctx, ticketId)
 	dataOut, err := s.getTicketItemByLock(ctx, ticketId)
 	if err != nil {
 		global.Logger.Error("get lock failed", zap.Error(err))

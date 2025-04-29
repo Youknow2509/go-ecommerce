@@ -25,12 +25,15 @@ func (s *sRedisCache) WithDistributedLock(ctx context.Context, key string, expir
 		ctx,
 		key,
 		timeTll,
-		&redislock.Options{
-			// RetryStrategy: linearBackoff,
-		},
+		// &redislock.Options{
+		// 	// RetryStrategy: linearBackoff,
+		// },
+		nil,
 	)
 	if err == redislock.ErrNotObtained {
-		return fmt.Errorf("could not obtain lock for key: %s", key)
+		fmt.Printf("could not obtain lock for key: %s\n", key)
+		// return fmt.Errorf("could not obtain lock for key: %s", key)
+		return nil
 	} else if err != nil {
 		return fmt.Errorf("failed to obtain lock: %w", err)
 	}
