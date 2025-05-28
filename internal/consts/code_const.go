@@ -1,6 +1,8 @@
 package consts
 
 const (
+	SERVICE_NAME = "go-ecommerce"
+
 	EMAIL  int = 1
 	MOBILE int = 2
 

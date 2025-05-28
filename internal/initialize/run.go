@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Youknow2509/go-ecommerce/global"
-	"github.com/Youknow2509/go-ecommerce/pkg/logger"
+	// "github.com/Youknow2509/go-ecommerce/pkg/logger"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,13 +15,13 @@ func Run() *gin.Engine {
 	fmt.Println("@@@ Loader configuration")	
 
 	// connect to rabbit mq
-	InitRabbitMQ()
-	fmt.Println("RabbitMQ initialized")
-	logger.ChannelRabbitMq = global.RabbitMQProducer_LOGGERDISCORD
+	// InitRabbitMQ()
+	// fmt.Println("RabbitMQ initialized")
+	// logger.ChannelRabbitMq = global.RabbitMQProducer_LOGGERDISCORD
 
 	// initialize logstash
 	InitLogstash()
-	global.Logger.Info("Logstash initialized")
+	fmt.Println("Logstash initialized")
 
 	// initialize logger
 	InitLogger()

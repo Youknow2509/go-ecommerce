@@ -3,7 +3,7 @@ package model
 // enum level
 type LogLevel string
 
-var LogLevelName = map[LogLevel]string{
+var LogLevelName = map[string]LogLevel{
 	"info":    "Information",
 	"warning": "Warning",
 	"error":   "Error",

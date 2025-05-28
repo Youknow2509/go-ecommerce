@@ -4,32 +4,13 @@ import (
 	"os"
 
 	"github.com/Youknow2509/go-ecommerce/pkg/setting"
-	"github.com/Youknow2509/go-ecommerce/pkg/utils/rabbitmq"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
-    amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type LoggerZap struct {
 	*zap.Logger
-}
-
-var (
-    ChannelRabbitMq *amqp.Channel
-)
-
-type RabbitMQLogger struct {
-    producer rabbitmq.Write
-}
-
-// handle io.Writer in RabbitMQLogger
-func (r *RabbitMQLogger) Write(p []byte) (n int, err error) {
-    err = r.producer.WriteToTopic("logger_discord", "logger.info", p)
-    if err != nil {
-        return 0, err
-    }
-    return len(p), nil
 }
 
 func NewLogger(configLogger setting.LoggerSetting) *LoggerZap {
@@ -65,22 +46,49 @@ func NewLogger(configLogger setting.LoggerSetting) *LoggerZap {
 		Compress:   configLogger.Compress,   // Whether to compress old files
 	}
 
-    // hook_rb := &RabbitMQLogger{
-    //     producer: rabbitmq.NewRabbitMQWriter(ChannelRabbitMq),
-    // }
+	// hook_rb := &RabbitMQLogger{
+	//     producer: rabbitmq.NewRabbitMQWriter(ChannelRabbitMq),
+	// }
 
-	core := zapcore.NewCore(
-		encoder,
-		zapcore.NewMultiWriteSyncer(
-			zapcore.AddSync(os.Stdout),
-			zapcore.AddSync(&hook),
-            // zapcore.AddSync(hook_rb),
+	encoderJson := zapcore.NewJSONEncoder(getEncoderConfig())
+
+	core := zapcore.NewTee(
+		zapcore.NewCore(
+			encoder,
+			zapcore.NewMultiWriteSyncer(
+				zapcore.AddSync(os.Stdout),
+				zapcore.AddSync(&hook)),
+			// zapcore.AddSync(hook_rb),
+			level,
 		),
-		level)
+		zapcore.NewCore(
+			encoderJson,
+			NewLogstashWriter(),
+			level,
+		),
+	)
 
 	// logger := zap.New(core, zap.AddCaller())
 
 	return &LoggerZap{zap.New(core, zap.AddCaller(), zap.AddStacktrace(zap.ErrorLevel))}
+}
+
+// EncoderConfig 
+func getEncoderConfig() zapcore.EncoderConfig {
+	return zapcore.EncoderConfig{
+		TimeKey:        "time",
+		LevelKey:       "level",
+		NameKey:        "logger",
+		CallerKey:      "caller",
+		MessageKey:     "msg",
+		StacktraceKey:  "stacktrace",
+		LineEnding:     zapcore.DefaultLineEnding,
+		EncodeLevel:    zapcore.CapitalLevelEncoder, // INFO, DEBUG, WARN, ERROR
+		EncodeTime:     zapcore.ISO8601TimeEncoder, // 2024-12-28T00:11:23.243+0700
+		EncodeDuration: zapcore.SecondsDurationEncoder,
+		EncodeCaller:   zapcore.ShortCallerEncoder, // cli/main.log.go:24
+		EncodeName:     zapcore.FullNameEncoder,
+	}
 }
 
 // format logs a message

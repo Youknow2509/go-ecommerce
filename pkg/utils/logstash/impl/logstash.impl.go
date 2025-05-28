@@ -1,6 +1,7 @@
 package impl
 
 import (
+	"encoding/json"
 	"fmt"
 	"net"
 
@@ -23,8 +24,14 @@ func (l *LogstashServiceImpl) SendLog(entry model.LogstashEntry) error {
 	}
 	defer conn.Close()
 
+	// convert to json
+	jsonData, err := json.Marshal(entry)
+	if err != nil {
+		return fmt.Errorf("failed to marshal log entry to JSON: %w", err)
+	}
+
 	// send log entry to logstash server
-	_, err = conn.Write([]byte(entry.Message + "\n"))
+	_, err = conn.Write(jsonData)
 	if err != nil {
 		return fmt.Errorf("failed to send log entry to Logstash server: %w", err)
 	}
