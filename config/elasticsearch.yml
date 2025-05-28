@@ -1,0 +1,6 @@
+# ======================== Elasticsearch Configuration =========================
+network.host: 0.0.0.0
+http.port: 9200
+xpack.security.enabled: false
+xpack.license.self_generated.type: trial
+xpack.monitoring.collection.enabled: false

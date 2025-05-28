@@ -1,0 +1,12 @@
+
+node.name: logstash-service
+
+# ----------------------- Pipeline Settings --------------------
+# pipeline.workers: 2
+# pipeline.batch.size: 125
+# pipeline.batch.delay: 50
+
+# ----------------------- Monitoring ---------------------------
+api.http.host: "0.0.0.0"
+api.http.port: 9600
+

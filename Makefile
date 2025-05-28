@@ -25,6 +25,7 @@ GOOSE_PATH_QUERIES = sql/queries
 .PHONY: help
 .PHONY: install_path_pkg run_server wire regenerate_wire clear_log cre_env deps build test coverage
 .PHONY: docker_run_redis_cluster docker_build docker_run docker_stop docker_stop_v docker_run_monitoring docker_stop_monitoring docker_stop_monitoring_v
+.PHONY: docker_run_elk docker_stop_elk
 .PHONY: exec_mysql mysql_dump exec_redis exec_kafka_ui
 .PHONY: goose_create goose_up goose_down goose_status goose_fix goose_redo goose_reset goose_clean goose_up_by_one
 .PHONY: swag
@@ -55,6 +56,8 @@ help:
 	@echo "\t ${YELLOW_COLOR_BG}docker_stop_monitoring${RESET_COLOR} \t Stop Prometheus, Graphana, ... Docker container"
 	@echo "\t ${YELLOW_COLOR_BG}docker_stop_monitoring_v${RESET_COLOR} \t Stop and remove Prometheus, Graphana, ... Docker container"
 	@echo "\t ${YELLOW_COLOR_BG}docker_run_redis_cluster${RESET_COLOR} \t Run Redis Cluster"
+	@echo "\t ${YELLOW_COLOR_BG}docker_run_elk${RESET_COLOR} \t Run ELK"
+	@echo "\t ${YELLOW_COLOR_BG}docker_stop_elk${RESET_COLOR} \t Stop ELK"
 
 	@echo "\nContainer Exec Commands:"
 	@echo "\t ${YELLOW_COLOR_BG}exec_mysql${RESET_COLOR} \t Execute MySQL CLI"
@@ -77,6 +80,18 @@ help:
 	@echo "\t ${YELLOW_COLOR_BG}swag${RESET_COLOR} \t Handle swagger"
 	@echo "\nVegeta attack benmark Commands:"
 	@echo "\t ${YELLOW_COLOR_BG}vegeta_benmark${RESET_COLOR} \t Run vegeta attack benmark"
+
+# Docker Stop ELK
+docker_stop_elk:
+	@echo "${YELLOW_COLOR_BG}Stoping ELK Stack (Elasticsearch, Logstash, Kibana)${RESET_COLOR}"
+	docker compose -f ./environment/docker-compose-elk.yml -p go_ecommerce down
+	@echo "${GREEN_COLOR_BG}ELK Stack stopped${RESET_COLOR}"
+
+# Docker Run ELK
+docker_run_elk:
+	@echo "${YELLOW_COLOR_BG}Running ELK Stack (Elasticsearch, Logstash, Kibana)${RESET_COLOR}"
+	docker compose -f ./environment/docker-compose-elk.yml -p go_ecommerce up -d
+	@echo "${GREEN_COLOR_BG}ELK Stack started${RESET_COLOR}"
 
 # Docker Run Redis Cluster
 docker_run_redis_cluster:

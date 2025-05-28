@@ -1,0 +1,53 @@
+networks:
+  go-ecommerce-local-network:
+    driver: bridge
+
+services:
+  # elasticsearch service - single node
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.0.1
+    container_name: elasticsearch-service
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+      # mounting data
+      - ./data/elasticsearch_data:/usr/share/elasticsearch/data
+      # mounting config
+      - ../config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    networks:
+      - go-ecommerce-local-network
+
+  # kibana service
+  kibana:
+    image: docker.elastic.co/kibana/kibana:9.0.1
+    container_name: kibana-service
+    ports:
+      - 5601:5601
+    volumes:
+      # mounting config
+      - ../config/kibana.yml:/usr/share/kibana/config/kibana.yml
+    networks:
+      - go-ecommerce-local-network
+    depends_on:
+      - elasticsearch
+
+  # logstash service
+  logstash:
+    image: docker.elastic.co/logstash/logstash:9.0.1
+    container_name: logstash-service
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+    volumes:
+      # mounting pipeline
+      - ../config/logstash/pipeline:/usr/share/logstash/pipeline/
+      # mounting config
+      - ../config/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
+    depends_on:
+      - elasticsearch
+    networks:
+      - go-ecommerce-local-network

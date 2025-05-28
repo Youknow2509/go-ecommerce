@@ -13,13 +13,13 @@ import (
 )
 
 var (
-	Config        setting.Config
-	Logger        *logger.LoggerZap
-	Mdb           *gorm.DB
-	Rdb           *redis.Client
-	MongoClient   *mongo.Client
-	Mdbc          *sql.DB
-	KafkaProducer *kafka.Writer
+	Config                         setting.Config
+	Logger                         *logger.LoggerZap
+	Mdb                            *gorm.DB
+	Rdb                            *redis.Client
+	MongoClient                    *mongo.Client
+	Mdbc                           *sql.DB
+	KafkaProducer                  *kafka.Writer
 	RabbitMQProducer_LOGGERDISCORD *amqp.Channel
-	Prometheus *setting.PrometheusSetting
+	Prometheus                     *setting.PrometheusSetting
 )
