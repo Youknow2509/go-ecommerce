@@ -13,6 +13,13 @@ type Config struct {
 	Jwt      JwtSetting      `mapstructure:"jwt"`
 	MongoDB  MongoDBSetting  `mapstructure:"mongodb"`
 	Kafka    KafkaSetting    `mapstructure:"kafka"`
+	Logstash LogstashSetting `mapstructure:"logstash"`
+}
+
+// logstash struct settings
+type LogstashSetting struct {
+	Host string `mapstructure:"host"`
+	Port string `mapstructure:"port"`
 }
 
 // kafka struct settings

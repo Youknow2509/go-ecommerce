@@ -89,3 +89,7 @@ monitoring:
     redis_exporter_port: 9121
     mysql_exporter_port: 9104
     kafka_exporter_port: 9308
+
+logstash:
+    host: 127.0.0.1
+    port: 5044

@@ -19,6 +19,10 @@ func Run() *gin.Engine {
 	fmt.Println("RabbitMQ initialized")
 	logger.ChannelRabbitMq = global.RabbitMQProducer_LOGGERDISCORD
 
+	// initialize logstash
+	InitLogstash()
+	global.Logger.Info("Logstash initialized")
+
 	// initialize logger
 	InitLogger()
 	global.Logger.Info("Logger initialized")
