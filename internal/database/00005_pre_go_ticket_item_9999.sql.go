@@ -7,7 +7,51 @@ package database
 
 import (
 	"context"
+	"database/sql"
 )
+
+const checkTicketItemExists = `-- name: CheckTicketItemExists :one
+SELECT id
+FROM ticket_item
+WHERE id = ?
+`
+
+func (q *Queries) CheckTicketItemExists(ctx context.Context, id int64) (int64, error) {
+	row := q.db.QueryRowContext(ctx, checkTicketItemExists, id)
+	err := row.Scan(&id)
+	return id, err
+}
+
+const decreaseTicketV1 = `-- name: DecreaseTicketV1 :execresult
+UPDATE ticket_item
+SET stock_available = stock_available - ?
+WHERE id = ?
+`
+
+type DecreaseTicketV1Params struct {
+	StockAvailable int32
+	ID             int64
+}
+
+func (q *Queries) DecreaseTicketV1(ctx context.Context, arg DecreaseTicketV1Params) (sql.Result, error) {
+	return q.db.ExecContext(ctx, decreaseTicketV1, arg.StockAvailable, arg.ID)
+}
+
+const decreaseTicketV2 = `-- name: DecreaseTicketV2 :execresult
+UPDATE ticket_item
+SET stock_available = stock_available - ?
+WHERE id = ? AND stock_available = ?
+`
+
+type DecreaseTicketV2Params struct {
+	StockAvailable   int32
+	ID               int64
+	StockAvailable_2 int32
+}
+
+func (q *Queries) DecreaseTicketV2(ctx context.Context, arg DecreaseTicketV2Params) (sql.Result, error) {
+	return q.db.ExecContext(ctx, decreaseTicketV2, arg.StockAvailable, arg.ID, arg.StockAvailable_2)
+}
 
 const getTicketItemById = `-- name: GetTicketItemById :one
 SELECT id, name, stock_initial, stock_available

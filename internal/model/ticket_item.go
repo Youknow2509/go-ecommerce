@@ -12,3 +12,10 @@ type TicketItemsOutput struct {
 type TicketItemRequest struct {
 	TicketId string `json:"ticket_Id"`
 }
+
+// ticket decrease request
+type TicketItemDecreaseRequest struct {
+	TicketId        int `json:"ticket_Id"`
+	Quantity        int `json:"quantity"`
+	TicketInventory int `json:"ticket_Inventory"`
+}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/Youknow2509/go-ecommerce/global"
 	"github.com/Youknow2509/go-ecommerce/internal/consts"
@@ -22,20 +23,49 @@ type sTicketItem struct {
 	distributedCache service.IRedisCache
 }
 
-func NewTicketItemImpl(r *database.Queries, localCache service.ILocalCache, distributedCache service.IRedisCache) *sTicketItem {
-	return &sTicketItem{
-		r:                r,
-		localCache:       localCache,
-		distributedCache: distributedCache,
+// DecreaseTicketItemRelease implements service.ITicketItem.
+func (s *sTicketItem) DecreaseTicketItemRelease(ctx context.Context, ticketId int, quantity int) (err error) {
+	// TODO
+	panic("unimplemented")
+}
+
+// DecreaseTicketItem implements service.ITicketItem.
+func (s *sTicketItem) DecreaseTicketItem(ctx context.Context, ticketId int, ticketInventory int, quantity int) (err error) {
+	// check ticket after decrease
+	ticketAfter := ticketInventory - quantity
+	if ticketAfter < 0 {
+		return fmt.Errorf("ticket inventory is not enough, current: %d, decrease: %d", ticketInventory, quantity)
 	}
+	// distribute lock key
+	err = s.decreaseTicketItemByLock(ctx, ticketId, ticketInventory, quantity)
+	if err != nil {
+		global.Logger.Error("decrease ticket item failed", zap.Error(err))
+		return err
+	}
+	cacheKey := fmt.Sprintf("ticket_item_%d", ticketId)
+	dataJson, _ := json.Marshal(model.TicketItemsOutput{
+		TicketId:       ticketId,
+		StockAvailable: ticketAfter,
+		StockInitial:   ticketInventory,
+	})
+	// update distributed cache
+	err = global.Rdb.Set(ctx, cacheKey, dataJson, time.Duration(consts.TIME_TTL_LOCAL_CACHE)*time.Minute).Err()
+	if err != nil {
+		global.Logger.Error("set distributed cache failed", zap.Error(err))
+		return fmt.Errorf("set distributed cache failed: %w", err)
+	}
+	// update local cache inventory ticket
+	if s.localCache.Set(ctx, cacheKey, string(dataJson)) {
+		global.Logger.Warn("set local cache failed", zap.String("cacheKey", cacheKey))
+	}
+	return nil
 }
 
 // var mu sync.Mutex
-
 func (s *sTicketItem) GetTicketItemById(ctx context.Context, ticketId int) (out *model.TicketItemsOutput, err error) {
 	fmt.Println("CAL service GetTicketItemById...")
 	cacheKey := fmt.Sprintf("ticket_item_%d", ticketId)
-	
+
 	// mu.Lock()
 	// defer mu.Unlock()
 
@@ -81,7 +111,29 @@ func (s *sTicketItem) GetTicketItemById(ctx context.Context, ticketId int) (out 
 		global.Logger.Error("get lock failed", zap.Error(err))
 		return nil, err
 	}
+	// set data to distributed cache
+	dataJson, _ := json.Marshal(dataOut)
+	_, err = global.Rdb.Set(ctx, cacheKey, dataJson, time.Duration(consts.TIME_TTL_LOCAL_CACHE)*time.Minute).Result()
+	if err != nil {
+		global.Logger.Error("set distributed cache failed", zap.Error(err))
+		return nil, fmt.Errorf("set distributed cache failed: %w", err)
+	}
+	// set data to local cache
+	ok = s.localCache.SetWithTTL(ctx, cacheKey, string(dataJson))
+	if !ok {
+		global.Logger.Warn("set local cache failed", zap.String("cacheKey", cacheKey))
+		return nil, fmt.Errorf("set local cache failed")
+	}
+
 	return dataOut, nil
+}
+
+func NewTicketItemImpl(r *database.Queries, localCache service.ILocalCache, distributedCache service.IRedisCache) *sTicketItem {
+	return &sTicketItem{
+		r:                r,
+		localCache:       localCache,
+		distributedCache: distributedCache,
+	}
 }
 
 // get ticket from lock database
@@ -120,6 +172,39 @@ func (s *sTicketItem) getTicketItemByLock(ctx context.Context, ticketId int) (ou
 	})
 
 	return
+}
+
+// decrease ticket item lock database
+func (s *sTicketItem) decreaseTicketItemByLock(ctx context.Context, ticketId int, ticketInventory int, quantity int) (err error) {
+	lockKey := fmt.Sprintf("lock_ticket_item_decrease_%d", ticketId)
+	// lock
+	err = s.distributedCache.WithDistributedLock(ctx, lockKey, 2, func(ctx context.Context) error {
+		global.Logger.Info("decrease ticket item from database")
+		// decrease ticket item from database
+		res, err := s.r.DecreaseTicketV2(ctx, database.DecreaseTicketV2Params{
+			ID:               int64(ticketId),
+			StockAvailable:   int32(quantity),
+			StockAvailable_2: int32(ticketInventory),
+		})
+		if err != nil {
+			return err
+		}
+		rowsAffected, err := res.RowsAffected()
+		if err != nil {
+			global.Logger.Error("get rows affected failed", zap.Error(err))
+			return fmt.Errorf("get rows affected failed: %w", err)
+		}
+		if rowsAffected == 0 {
+			global.Logger.Warn("ticket item not found or stock is not enough", zap.Int("ticketId", ticketId), zap.Int("quantity", quantity))
+			return fmt.Errorf("ticket item not found or stock is not enough")
+		}
+		return nil
+	})
+	if err != nil {
+		global.Logger.Error("decrease ticket item failed", zap.Error(err))
+		return err
+	}
+	return nil
 }
 
 // get data from database

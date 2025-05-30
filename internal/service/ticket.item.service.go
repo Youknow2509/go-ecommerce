@@ -11,6 +11,8 @@ type (
 	}
 	ITicketItem interface {
 		GetTicketItemById(ctx context.Context, ticketId int) (out *model.TicketItemsOutput, err error)
+		DecreaseTicketItem(ctx context.Context, ticketId int, ticketInventory int, quantity int) (err error)
+		DecreaseTicketItemRelease(ctx context.Context, ticketId int, quantity int) (err error) // release only "int" ticket from event
 	}
 )
 
