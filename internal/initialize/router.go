@@ -35,6 +35,7 @@ func InitRouter() *gin.Engine {
 	userRouter := routers.RouterGroupApp.User
 	prometheusRouter := routers.RouterGroupApp.Prometheus
 	productRouter := routers.RouterGroupApp.Product
+	cronRouter := routers.RouterGroupApp.Cron
 
 	MainGroup := router.Group("/v1")
 	{
@@ -53,6 +54,9 @@ func InitRouter() *gin.Engine {
 	}
 	{
 		productRouter.InitClothingRouter(MainGroup)
+	}
+	{
+		cronRouter.InitAdminCronRouter(MainGroup)
 	}
 
 	prometheusRouter.InitRouter(router)

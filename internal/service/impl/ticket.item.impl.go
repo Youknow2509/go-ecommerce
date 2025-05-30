@@ -25,8 +25,11 @@ type sTicketItem struct {
 
 // DecreaseTicketItemRelease implements service.ITicketItem.
 func (s *sTicketItem) DecreaseTicketItemRelease(ctx context.Context, ticketId int, quantity int) (err error) {
-	// TODO
-	panic("unimplemented")
+	/**
+	 * use distributed cache to decrease ticket item after change database
+	 */
+	
+	return nil
 }
 
 // DecreaseTicketItem implements service.ITicketItem.

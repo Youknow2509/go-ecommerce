@@ -48,6 +48,10 @@ func Run() *gin.Engine {
 	InitRedisSentinel()
 	global.Logger.Info("Redis initialized")
 
+	// init cron job
+	InitCronJob()
+	global.Logger.Info("Cron job initialized")
+	
 	// connect to kafka
 	InitKafka()
 	global.Logger.Info("Kafka initialized")

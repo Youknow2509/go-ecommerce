@@ -4,8 +4,10 @@ import (
 	"strconv"
 
 	"github.com/Youknow2509/go-ecommerce/global"
+	"github.com/Youknow2509/go-ecommerce/internal/database"
 	"github.com/Youknow2509/go-ecommerce/internal/model"
 	"github.com/Youknow2509/go-ecommerce/internal/service"
+	"github.com/Youknow2509/go-ecommerce/pkg/cron"
 	"github.com/Youknow2509/go-ecommerce/response"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -71,3 +73,52 @@ func (p *cTicketItem) DecreaseTicketItem(ctx *gin.Context) {
 	}
 	response.SuccessResponse(ctx, response.ErrCodeSuccess, "decrease ticket item successfully")
 }
+
+// @Summary      Realse ticket enable
+// @Description  Realse ticket enable
+// @Tags         ticket management
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  response.ResponseData
+// @Failure      500  {object}  response.ErrResponseData
+// @Router       /v1/ticket/item/release/enable [post]
+func (p *cTicketItem) ReleaseTicketItemEnable(ctx *gin.Context) {
+	q := database.New(global.Mdbc)
+
+	err := cron.StockReleaseCron(global.Cron, q)
+	if err != nil {
+		global.Logger.Error("release ticket item error", zap.Error(err))
+		response.ErrorResponse(ctx, response.ErrCodeCronAddJobFailed, "failed to release ticket item")
+		return
+	}
+
+	global.Cron.Start()
+}
+
+// @Summary      Realse ticket disable
+// @Description  Realse ticket disable
+// @Tags         ticket management
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  response.ResponseData
+// @Failure      500  {object}  response.ErrResponseData
+// @Router       /v1/ticket/item/release/disable [post]
+func (p *cTicketItem) ReleaseTicketItemDisable(ctx *gin.Context) {
+	// stop cron job
+	global.Cron.Stop()
+	// clear stock release count in redis
+	err := global.Rdb.Del(ctx, "stock_release_count").Err()
+	if err != nil {
+		global.Logger.Error("failed to clear stock release count in redis", zap.Error(err))
+		response.ErrorResponse(ctx, 404, "failed to clear stock release count in redis")
+		return
+	}
+	response.SuccessResponse(ctx, response.ErrCodeSuccess, "release ticket item disabled successfully")
+}
+
+// // @Summary      Decrease ticket release
+// // @Description  Decrease ticket release
+// // @Tags         ticket management
+// // @Accept       json
+// // @Produce      json
+// // TODO: implement this function

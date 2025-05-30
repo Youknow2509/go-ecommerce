@@ -14,6 +14,8 @@ func (tr *TicketRouter) InitTicketRouter(Router *gin.RouterGroup) {
 		// ticketRouterPublic.GET("/search")
 		ticketRouterPublic.GET("/item/:id", ticket.TicketItem.GetTicketItemById)
 		ticketRouterPublic.POST("/item/decrease", ticket.TicketItem.DecreaseTicketItem)
+		ticketRouterPublic.POST("/item/release/enable", ticket.TicketItem.ReleaseTicketItemEnable)
+		ticketRouterPublic.POST("/item/release/disable", ticket.TicketItem.ReleaseTicketItemDisable)
 	}
 	// private router
 

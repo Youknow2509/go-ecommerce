@@ -7,12 +7,14 @@ import (
 	"github.com/Youknow2509/go-ecommerce/pkg/setting"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/redis/go-redis/v9"
+	"github.com/robfig/cron/v3"
 	"github.com/segmentio/kafka-go"
 	"go.mongodb.org/mongo-driver/mongo"
 	"gorm.io/gorm"
 )
 
 var (
+	Cron                           *cron.Cron
 	Config                         setting.Config
 	Logger                         *logger.LoggerZap
 	Mdb                            *gorm.DB

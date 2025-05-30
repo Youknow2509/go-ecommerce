@@ -50,10 +50,24 @@ const (
 
 	// product
 	ErrCodeCreateProductError = 100001
+
+	// cron job
+	ErrCodeCronAddJobFailed     = 200001
+	ErrCodeCronStartFailed      = 200002
+	ErrCodeCronStopFailed       = 200003
+	ErrCodeCronRemoveJobFailed  = 200004
+	ErrCodeCronJobNotFound      = 200005
+	ErrCodeCronJobAlreadyExists = 200006
 )
 
 // message
 var msg = map[int]string{
+	ErrCodeCronAddJobFailed:         "add cron job failed",
+	ErrCodeCronStartFailed:          "start cron job failed",
+	ErrCodeCronStopFailed:           "stop cron job failed",
+	ErrCodeCronRemoveJobFailed:      "remove cron job failed",
+	ErrCodeCronJobNotFound:          "cron job not found",
+	ErrCodeCronJobAlreadyExists:     "cron job already exists",
 	ErrCodeCreateProductError:       "create product error",
 	ErrCodeSuccess:                  "success",
 	ErrCodeParamInvalid:             "email is invalid",
