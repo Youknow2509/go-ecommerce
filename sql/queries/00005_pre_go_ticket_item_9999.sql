@@ -6,7 +6,7 @@ WHERE id = ?;
 -- name: DecreaseTicketV1 :execresult
 UPDATE ticket_item
 SET stock_available = stock_available - ?
-WHERE id = ?;
+WHERE id = ? AND stock_available >= ?;
 
 -- name: DecreaseTicketV2 :execresult
 UPDATE ticket_item

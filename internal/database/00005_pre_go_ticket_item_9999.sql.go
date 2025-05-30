@@ -25,16 +25,17 @@ func (q *Queries) CheckTicketItemExists(ctx context.Context, id int64) (int64, e
 const decreaseTicketV1 = `-- name: DecreaseTicketV1 :execresult
 UPDATE ticket_item
 SET stock_available = stock_available - ?
-WHERE id = ?
+WHERE id = ? AND stock_available >= ?
 `
 
 type DecreaseTicketV1Params struct {
-	StockAvailable int32
-	ID             int64
+	StockAvailable   int32
+	ID               int64
+	StockAvailable_2 int32
 }
 
 func (q *Queries) DecreaseTicketV1(ctx context.Context, arg DecreaseTicketV1Params) (sql.Result, error) {
-	return q.db.ExecContext(ctx, decreaseTicketV1, arg.StockAvailable, arg.ID)
+	return q.db.ExecContext(ctx, decreaseTicketV1, arg.StockAvailable, arg.ID, arg.StockAvailable_2)
 }
 
 const decreaseTicketV2 = `-- name: DecreaseTicketV2 :execresult

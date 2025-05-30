@@ -85,7 +85,7 @@ func (p *cTicketItem) DecreaseTicketItem(ctx *gin.Context) {
 func (p *cTicketItem) ReleaseTicketItemEnable(ctx *gin.Context) {
 	q := database.New(global.Mdbc)
 
-	err := cron.StockReleaseCron(global.Cron, q)
+	err := cron.TicketReleaseCron(global.Cron, q)
 	if err != nil {
 		global.Logger.Error("release ticket item error", zap.Error(err))
 		response.ErrorResponse(ctx, response.ErrCodeCronAddJobFailed, "failed to release ticket item")
@@ -116,9 +116,28 @@ func (p *cTicketItem) ReleaseTicketItemDisable(ctx *gin.Context) {
 	response.SuccessResponse(ctx, response.ErrCodeSuccess, "release ticket item disabled successfully")
 }
 
-// // @Summary      Decrease ticket release
-// // @Description  Decrease ticket release
-// // @Tags         ticket management
-// // @Accept       json
-// // @Produce      json
-// // TODO: implement this function
+// @Summary      Decrease ticket release
+// @Description  Decrease ticket release
+// @Tags         ticket management
+// @Accept       json
+// @Produce      json
+// @Param        input body model.TicketItemReleaseDecreaseRequest true "Ticket Item Decrease Release Request"
+// @Success      200  {object}  response.ResponseData
+// @Failure      500  {object}  response.ErrResponseData
+// @Router       /v1/ticket/item/release/decrease [post]
+func (p *cTicketItem) DecreaseTicketItemRelease(ctx *gin.Context) {
+	// bind request body
+	var req model.TicketItemReleaseDecreaseRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		response.ErrorResponse(ctx, response.ErrCodeParamInvalid, "invalid request body")
+		return
+	}
+	// call implementation
+	err := service.TicketItem().DecreaseTicketItemRelease(ctx, req.TicketId, req.Quantity)
+	if err != nil {
+		global.Logger.Warn("decrease ticket item release error", zap.Error(err))
+		response.ErrorResponse(ctx, response.ErrCodeParamInvalid, err.Error())
+		return
+	}
+	response.SuccessResponse(ctx, response.ErrCodeSuccess, "decrease ticket item release successfully")
+}

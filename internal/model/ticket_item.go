@@ -19,3 +19,9 @@ type TicketItemDecreaseRequest struct {
 	Quantity        int `json:"quantity"`
 	TicketInventory int `json:"ticket_Inventory"`
 }
+
+// ticket release decrease request
+type TicketItemReleaseDecreaseRequest struct {
+	TicketId int `json:"ticket_Id"`
+	Quantity int `json:"quantity"`
+}

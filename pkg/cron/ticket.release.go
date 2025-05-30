@@ -10,17 +10,15 @@ import (
 	"go.uber.org/zap"
 )
 
-// StockReleaseCron sets up a job to update stock count in Redis every 5 minutes.
-// It also runs once immediately at startup.
-func StockReleaseCron(cr *cron.Cron, q *database.Queries) error {
+func TicketReleaseCron(cr *cron.Cron, q *database.Queries) error {
 	const schedule = "@every 5m"
 
 	// Run immediately
-	runStockUpdate(q)
+	cmd(q)
 
 	// Schedule cron job
 	_, err := cr.AddFunc(schedule, func() {
-		runStockUpdate(q)
+		cmd(q)
 	})
 	if err != nil {
 		global.Logger.Error("Failed to add stock release cron job", zap.Error(err))
@@ -31,8 +29,7 @@ func StockReleaseCron(cr *cron.Cron, q *database.Queries) error {
 	return nil
 }
 
-// runStockUpdate queries stock and updates Redis cache.
-func runStockUpdate(q *database.Queries) {
+func cmd(q *database.Queries) {
 	ctx := context.Background()
 	const ttlSeconds = 8 * 60 * 60 // 8 hours
 
@@ -42,11 +39,11 @@ func runStockUpdate(q *database.Queries) {
 		return
 	}
 
-	err = global.Rdb.Set(ctx, "stock_release_count", stockItem.StockAvailable, time.Duration(ttlSeconds)*time.Second).Err()
+	err = global.Rdb.Set(ctx, "ticket_1_release_count", stockItem.StockAvailable, time.Duration(ttlSeconds)*time.Second).Err()
 	if err != nil {
 		global.Logger.Warn("Failed to set stock in Redis", zap.Error(err))
 		return
 	}
 
-	global.Logger.Info("Stock count cached", zap.Int("stock_release_count", int(stockItem.StockAvailable)))
+	global.Logger.Info("Stock count cached", zap.Int("ticket_1_release_count", int(stockItem.StockAvailable)))
 }
