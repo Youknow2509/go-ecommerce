@@ -6,7 +6,6 @@ import (
 )
 
 type AdminRouter struct {
-
 }
 
 // init admin cron router
@@ -17,5 +16,6 @@ func (ar *AdminRouter) InitAdminCronRouter(Router *gin.RouterGroup) {
 		adminRouterPublic.POST("/inspace", cron.CronJob.InspaceCronJob)
 		adminRouterPublic.POST("/start", cron.CronJob.StartCronJob)
 		adminRouterPublic.POST("/stop", cron.CronJob.StopCronJob)
+		adminRouterPublic.POST("/remove", cron.CronJob.RemoveCronJob)
 	}
 }

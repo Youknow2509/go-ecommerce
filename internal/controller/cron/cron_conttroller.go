@@ -63,3 +63,20 @@ func (p *cCronJob) StopCronJob(ctx *gin.Context) {
 	global.Logger.Info("Cron job stopped")
 	response.SuccessResponse(ctx, response.ErrCodeSuccess, "Cron job stopped successfully")
 }
+
+// @Summary	  		Remove cron job
+// @Description  	Remove cron job
+// @Tags         	cron management
+// @Accept       	json
+// @Produce      	json		
+// @Success      	200  {object}  response.ResponseData
+// @Failure      	500  {object}  response.ErrResponseData
+// @Router       	/v1/cron/remove [post]
+func (p *cCronJob) RemoveCronJob(ctx *gin.Context) {
+	global.Cron.Stop()
+	for _, entry := range global.Cron.Entries() {
+		global.Cron.Remove(entry.ID)
+	}
+	global.Logger.Info("All cron jobs removed")
+	response.SuccessResponse(ctx, response.ErrCodeSuccess, "All cron jobs removed successfully")
+}
