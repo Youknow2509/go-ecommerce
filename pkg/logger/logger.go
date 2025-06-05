@@ -50,7 +50,7 @@ func NewLogger(configLogger setting.LoggerSetting) *LoggerZap {
 	//     producer: rabbitmq.NewRabbitMQWriter(ChannelRabbitMq),
 	// }
 
-	encoderJson := zapcore.NewJSONEncoder(getEncoderConfig())
+	// encoderJson := zapcore.NewJSONEncoder(getEncoderConfig())
 
 	core := zapcore.NewTee(
 		zapcore.NewCore(
@@ -61,11 +61,11 @@ func NewLogger(configLogger setting.LoggerSetting) *LoggerZap {
 			// zapcore.AddSync(hook_rb),
 			level,
 		),
-		zapcore.NewCore(
-			encoderJson,
-			NewLogstashWriter(),
-			level,
-		),
+		// zapcore.NewCore(
+		// 	encoderJson,
+		// 	NewLogstashWriter(),
+		// 	level,
+		// ),
 	)
 
 	// logger := zap.New(core, zap.AddCaller())
