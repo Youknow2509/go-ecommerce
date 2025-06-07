@@ -29,6 +29,19 @@ func (q *Queries) AddOrUpdateEmail(ctx context.Context, arg AddOrUpdateEmailPara
 	return err
 }
 
+const countActiveTwoFactorMethods = `-- name: CountActiveTwoFactorMethods :one
+SELECT COUNT(*)
+FROM ` + "`" + `user_two_factor_001` + "`" + `
+WHERE user_id = ? AND two_factor_is_active = TRUE
+`
+
+func (q *Queries) CountActiveTwoFactorMethods(ctx context.Context, userID uint32) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countActiveTwoFactorMethods, userID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const disableTwoFactor = `-- name: DisableTwoFactor :exec
 UPDATE ` + "`" + `user_two_factor_001` + "`" + `
 SET two_factor_is_active = FALSE, 

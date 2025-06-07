@@ -18,7 +18,7 @@ type (
 
 		// user base
 		GetOneUserInfo(ctx context.Context, user_account string) (*entity.OutInfoBaseUser, error)
-		GetOneUserInfoForAdmin(ctx context.Context, user_id int64) (*entity.OutInforUserForAdmin, error)
+		GetOneUserInfoForAdmin(ctx context.Context, user_account string) (*entity.OutInforUserForAdmin, error)
 		CheckUserBaseExists(ctx context.Context, user_account string) (bool, error)
 		AddUserBase(ctx context.Context, input *entity.InputAddUserBase) error
 		UpdatePasswordUserBase(ctx context.Context, input *entity.InputUpdatePasswordUserBase) error
@@ -44,7 +44,7 @@ type (
 		RemoveTwoFactor(ctx context.Context, input *entity.InputRemoveTwoFactor) error
 		CountActiveTwoFactorMethods(ctx context.Context, user_id int64) (int64, error)
 		GetTwoFactorMethodByID(ctx context.Context, user_id int64) (*entity.OutGetTwoFactorMethod, error)
-		GetTwoFactorMethodByIDAndByType(ctx context.Context, user_id int64) (*entity.OutGetTwoFactorMethod, error)
+		GetTwoFactorMethodByIDAndByType(ctx context.Context, user_id int64, type_verify string) (*entity.OutGetTwoFactorMethod, error)
 	}
 )
 // ########################################################

@@ -1,12 +1,16 @@
 package entity
 
+import (
+	"time"
+)
+
 type (
 	// input for OTP verification
 	InputOtpVerify struct {
 		VerifyOtp     string `json:"verify_otp"`
 		VerifyKey     string `json:"verify_key"`
 		VerifyKeyHash string `json:"verify_key_hash"`
-		VerifyType    string `json:"verify_type"`
+		VerifyType    int    `json:"verify_type"`
 	}
 
 	// out info otp verification
@@ -15,7 +19,7 @@ type (
 		VerifyOtp     string `json:"verify_otp"`
 		VerifyKey     string `json:"verify_key"`
 		VerifyKeyHash string `json:"verify_key_hash"`
-		VerifyType    string `json:"verify_type"`
+		VerifyType    int    `json:"verify_type"`
 		IsVerified    bool   `json:"is_verified"`
 		IsDeleted     bool   `json:"is_deleted"`
 	}
@@ -56,62 +60,63 @@ type (
 
 	// input login user base
 	InputLoginUserBase struct {
+		UserIpLogin  string `json:"user_ip_login"`
 		UserAccount  string `json:"user_account"`
 		UserPassword string `json:"user_password"`
 	}
 
 	// out get user info
 	OutGetUserInfo struct {
-		UserId               int64  `json:"user_id"`
-		UserAccount          string `json:"user_account"`
-		UserNickname         string `json:"user_nickname"`
-		UserAvatar           string `json:"user_avatar"`
-		UserState            string `json:"user_state"`
-		UserMobile           string `json:"user_mobile"`
-		UserGender           string `json:"user_gender"`
-		UserBirthday         string `json:"user_birthday"`
-		UserEmail            string `json:"user_email"`
-		UserIsAuthentication bool   `json:"user_is_authentication"`
-		CreatedAt            string `json:"created_at"`
-		UpdatedAt            string `json:"updated_at"`
+		UserId               int64     `json:"user_id"`
+		UserAccount          string    `json:"user_account"`
+		UserNickname         string    `json:"user_nickname"`
+		UserAvatar           string    `json:"user_avatar"`
+		UserState            int       `json:"user_state"`
+		UserMobile           string    `json:"user_mobile"`
+		UserGender           int       `json:"user_gender"`
+		UserBirthday         time.Time `json:"user_birthday"`
+		UserEmail            string    `json:"user_email"`
+		UserIsAuthentication int       `json:"user_is_authentication"`
+		CreatedAt            string    `json:"created_at"`
+		UpdatedAt            string    `json:"updated_at"`
 	}
 
 	// input AddUserAutoUserId
 	InputAddUserAutoUserId struct {
-		UserAccount          string `json:"user_account"`
-		UserNickname         string `json:"user_nickname"`
-		UserAvatar           string `json:"user_avatar"`
-		UserState            string `json:"user_state"`
-		UserMobile           string `json:"user_mobile"`
-		UserGender           string `json:"user_gender"`
-		UserBirthday         string `json:"user_birthday"`
-		UserEmail            string `json:"user_email"`
-		UserIsAuthentication bool   `json:"user_is_authentication"`
+		UserAccount          string    `json:"user_account"`
+		UserNickname         string    `json:"user_nickname"`
+		UserAvatar           string    `json:"user_avatar"`
+		UserState            int       `json:"user_state"`
+		UserMobile           string    `json:"user_mobile"`
+		UserGender           int       `json:"user_gender"`
+		UserBirthday         time.Time `json:"user_birthday"`
+		UserEmail            string    `json:"user_email"`
+		UserIsAuthentication int       `json:"user_is_authentication"`
 	}
 
 	// input AddUserHaveUserId
 	InputAddUserHaveUserId struct {
-		UserId               int64  `json:"user_id"`
-		UserAccount          string `json:"user_account"`
-		UserNickname         string `json:"user_nickname"`
-		UserAvatar           string `json:"user_avatar"`
-		UserState            string `json:"user_state"`
-		UserMobile           string `json:"user_mobile"`
-		UserGender           string `json:"user_gender"`
-		UserBirthday         string `json:"user_birthday"`
-		UserEmail            string `json:"user_email"`
-		UserIsAuthentication bool   `json:"user_is_authentication"`
+		UserId               int64     `json:"user_id"`
+		UserAccount          string    `json:"user_account"`
+		UserNickname         string    `json:"user_nickname"`
+		UserAvatar           string    `json:"user_avatar"`
+		UserState            int       `json:"user_state"`
+		UserMobile           string    `json:"user_mobile"`
+		UserGender           int       `json:"user_gender"`
+		UserBirthday         time.Time `json:"user_birthday"`
+		UserEmail            string    `json:"user_email"`
+		UserIsAuthentication int       `json:"user_is_authentication"`
 	}
 
 	// input EditUserByUserId
 	InputEditUserByUserId struct {
-		UserId       int64  `json:"user_id"`
-		UserNickname string `json:"user_nickname"`
-		UserAvatar   string `json:"user_avatar"`
-		UserMobile   string `json:"user_mobile"`
-		UserGender   string `json:"user_gender"`
-		UserBirthday string `json:"user_birthday"`
-		UserEmail    string `json:"user_email"`
+		UserId       int64     `json:"user_id"`
+		UserNickname string    `json:"user_nickname"`
+		UserAvatar   string    `json:"user_avatar"`
+		UserMobile   string    `json:"user_mobile"`
+		UserGender   int       `json:"user_gender"`
+		UserBirthday time.Time `json:"user_birthday"`
+		UserEmail    string    `json:"user_email"`
 	}
 
 	// input enable two factor type email

@@ -52,7 +52,7 @@ WHERE user_id = ? AND two_factor_auth_type = ?;
 DELETE FROM `user_two_factor_001`
 WHERE user_id = ? AND two_factor_auth_type = ?;
 
--- CountActiveTwoFactorMethods :one
+-- name: CountActiveTwoFactorMethods :one
 SELECT COUNT(*)
 FROM `user_two_factor_001`
 WHERE user_id = ? AND two_factor_is_active = TRUE;
