@@ -21,7 +21,8 @@ var (
 	Rdb                            *redis.Client
 	MongoClient                    *mongo.Client
 	Mdbc                           *sql.DB
-	KafkaProducer                  *kafka.Writer
 	RabbitMQProducer_LOGGERDISCORD *amqp.Channel
 	Prometheus                     *setting.PrometheusSetting
+	KafkaSendOtp                   *kafka.Writer
+	
 )

@@ -16,7 +16,7 @@ WIRE = wire
 GOOSE=goose
 GOOSE_NAME ?= GO_ECOMMERCE
 GOOSE_DRIVER ?= mysql
-GOOSE_DB_DSN = "root:root123@tcp(127.0.0.1:3306)/go_ecommerce"
+GOOSE_DB_DSN = "root:root1234@tcp(127.0.0.1:3316)/ecommerce"
 GOOSE_MIGRATION_DSN ?= sql/schema
 GOOSE_PATH_SCHEMA ?= sql/schema
 GOOSE_PATH_QUERIES = sql/queries
@@ -173,7 +173,8 @@ regenerate_wire:
 	@echo "${GREEN_COLOR_BG}Wire generation complete${RESET_COLOR}"
 
 # Run Server with Wire Generation
-run_server: wire
+# run_server: wire
+run_server:
 	@echo "${GREEN_COLOR_BG}Running server in development mode${RESET_COLOR}"
 	@echo "${YELLOW_COLOR_BG}Configuration: config/local.yaml${RESET_COLOR}"
 	$(GO) run $(SERVER_MAIN)

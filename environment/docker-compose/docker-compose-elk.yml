@@ -1,0 +1,52 @@
+
+networks:
+  go-ecommerce-network:
+    driver: bridge
+
+services:
+  # ELK Stack
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.0.1
+    container_name: go-ecommerce-elasticsearch
+    volumes:
+      - ../elk/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      discovery.type: single-node
+    networks:
+      - go-ecommerce-network
+
+  # logstash logger
+  logstash:
+    image: docker.elastic.co/logstash/logstash:9.0.1
+    container_name: go-ecommerce-logstash
+    volumes:
+      - ../elk/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ../elk/pipeline:/usr/share/logstash/pipeline
+    ports:
+      - "5044:5044"
+      - "5033:5000/tcp"
+      - "5022:5000/udp"
+      - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - go-ecommerce-network
+    depends_on:
+      - elasticsearch
+
+  # Kibana
+  kibana:
+    image: docker.elastic.co/kibana/kibana:9.0.1
+    container_name: go-ecommerce-kibana
+    volumes:
+      - ../elk/kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - "5601:5601"
+    networks:
+      - go-ecommerce-network
+    depends_on:
+      - elasticsearch

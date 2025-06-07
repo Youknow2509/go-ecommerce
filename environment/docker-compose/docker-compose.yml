@@ -1,0 +1,35 @@
+
+networks:
+  go-ecommerce-network:
+    driver: bridge
+
+services:
+  # MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: go-ecommerce-mysql
+    volumes:
+      - ../data/db_data:/var/lib/mysql
+      - ../mysql/init:/docker-entrypoint-initdb.d/
+    command: [
+      '--character-set-server=utf8mb4',
+      '--collation-server=utf8mb4_unicode_ci',
+      '--skip-character-set-client-handshake'  # Buộc tất cả kết nối sử dụng utf8mb4
+    ]
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_DATABASE: ecommerce
+      MYSQL_PASSWORD: root1234
+    ports:
+      - "3316:3306"
+    networks:
+      - go-ecommerce-network
+
+  #Redis
+#  redis:
+#    container_name: go-ecommerce-redis
+#    image: redis:latest
+#    ports:
+#      - "6319:6379"
+#    networks:
+#      - go-ecommerce-network

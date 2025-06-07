@@ -4,10 +4,10 @@ server:
 
 mysql:
     host: 127.0.0.1
-    port: 3306
+    port: 3316
     username: root
-    password: root123
-    dbname: go_ecommerce
+    password: root1234
+    dbname: ecommerce
     maxIdleConns: 10
     maxOpenConns: 100
     connMaxLifetime: 3600
@@ -42,22 +42,10 @@ redis:
         - 127.0.0.1:26380
         - 127.0.0.1:26381
 
-zookeeper:
-    host: 127.0.0.1
-    port: 2181
-    #  TODO complete the configuration
-
-kafak:
-    host: 127.0.0.1
-    port_internal: 9092
-    port_external: 9094
-    # brokers:
-    #   -
-    #  TODO complete the configuration
-
-kafka_ui:
-    host: 127.0.0.1
-    port: 8083
+kafka_send_otp:
+    host: localhost
+    port: 9094
+    topic: send_otp
 
 smtp:
     host: smtp.gmail.com

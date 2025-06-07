@@ -4,16 +4,16 @@ import "github.com/prometheus/client_golang/prometheus"
 
 // Struct Config
 type Config struct {
-	Server   ServerSetting   `mapstructure:"server"`
-	MySQL    MySQLSetting    `mapstructure:mysql"`
-	Logger   LoggerSetting   `mapstructure:"logger"`
-	Redis    RedisSetting    `mapstructure:"redis"`
-	SendGrid SendGridSetting `mapstructure:"send_grid"`
-	RabbitMQ RabbitMQSetting `mapstructure:"rabbitmq"`
-	Jwt      JwtSetting      `mapstructure:"jwt"`
-	MongoDB  MongoDBSetting  `mapstructure:"mongodb"`
-	Kafka    KafkaSetting    `mapstructure:"kafka"`
-	Logstash LogstashSetting `mapstructure:"logstash"`
+	Server       ServerSetting   `mapstructure:"server"`
+	MySQL        MySQLSetting    `mapstructure:mysql"`
+	Logger       LoggerSetting   `mapstructure:"logger"`
+	Redis        RedisSetting    `mapstructure:"redis"`
+	SendGrid     SendGridSetting `mapstructure:"send_grid"`
+	RabbitMQ     RabbitMQSetting `mapstructure:"rabbitmq"`
+	Jwt          JwtSetting      `mapstructure:"jwt"`
+	MongoDB      MongoDBSetting  `mapstructure:"mongodb"`
+	Logstash     LogstashSetting `mapstructure:"logstash"`
+	KafkaSendOtp KafkaSetting    `mapstructure:"kafka_send_otp"`
 }
 
 // logstash struct settings
@@ -24,8 +24,9 @@ type LogstashSetting struct {
 
 // kafka struct settings
 type KafkaSetting struct {
-	TcpHost              string `mapstructure:"tcp_host"`
-	TopicServiceSendMail string `mapstructure:"topic_service_send_mail"`
+	Host  string `mapstructure:"host"`
+	Port  int    `mapstructure:"port"`
+	Topic string `mapstructure:"topic"`
 }
 
 // mongo struct settings

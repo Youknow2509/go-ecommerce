@@ -1,9 +1,6 @@
 package main
 
 import (
-	"strconv"
-
-	"github.com/Youknow2509/go-ecommerce/global"
 	"github.com/Youknow2509/go-ecommerce/internal/initialize"
 	"github.com/swaggo/gin-swagger" // gin-swagger middleware
 	"github.com/swaggo/files" // swagger embed files
@@ -34,7 +31,7 @@ func main() {
 
 	// use swagger
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
-	port := strconv.Itoa(global.Config.Server.Port)
-	r.Run(":" + port)
+	
+	// port := strconv.Itoa(global.Config.Server.Port)
+	r.Run(":8082")
 }

@@ -1,0 +1,43 @@
+
+networks:
+  go-ecommerce-network:
+    driver: bridge
+
+services:
+  # Kafka service
+  kafka-0:
+    image: bitnami/kafka:3.5
+    container_name: kafka-go-ecommerce-container
+    ports:
+      - "9094:9094"
+    environment:
+      # KRaft settings
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka-0:9095
+      # Listeners
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9094,CONTROLLER://:9095,EXTERNAL://:9096
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9094,EXTERNAL://:9096
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      # Topic settings
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+    volumes:
+      - ../kafka-storage/:/bitnami/kafka
+    networks:
+      - go-ecommerce-network
+
+  # kafka ui
+  kafka_ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-go-ecommerce-ui
+    ports:
+      - "8083:8080"
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=kafka-go-ecommerce
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka-0:9096
+    depends_on:
+      - kafka-0
+    networks:
+      - go-ecommerce-network
