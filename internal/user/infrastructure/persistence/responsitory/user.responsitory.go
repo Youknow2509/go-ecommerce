@@ -97,11 +97,11 @@ func (u *UserResponsitory) AddUserInfoHaveUserId(ctx context.Context, input *ent
 
 // CheckUserBaseExists implements responsitory.IUserResponsitory.
 func (u *UserResponsitory) CheckUserBaseExists(ctx context.Context, user_account string) (bool, error) {
-	_, err := u.db.CheckUserBaseExists(ctx, user_account)
+	response, err := u.db.CheckUserBaseExists(ctx, user_account)
 	if err != nil {
 		return false, err
 	}
-	return true, nil
+	return response > 0, nil
 }
 
 // CheckVerifyTwoFactorType implements responsitory.IUserResponsitory.

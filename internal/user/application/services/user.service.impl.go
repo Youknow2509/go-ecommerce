@@ -116,7 +116,7 @@ func (u *UserServiceImpl) RegisterUserService(ctx context.Context, input *model.
 	if err != nil {
 		return response.ErrCodeCheckUserBaseExists, err
 	}
-	if !ok {
+	if ok {
 		return response.ErrCodeUserHasExist, nil
 	}
 	// save distributed cache

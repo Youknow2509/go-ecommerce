@@ -6,6 +6,7 @@ import (
 
 func Run() *gin.Engine {
 	InitializeConfig()
+	InitializeLogger()
 	InitRedisSentinel()
 	InitializeMysqlAll()
 	InitKafka()
